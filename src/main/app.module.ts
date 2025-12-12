@@ -2,6 +2,7 @@ import { Module, OnModuleInit } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { TypeOrmConfigService } from './config/sqlite.config';
 import { UsersModule } from './users/users.module';
+import { TasksModule } from './tasks/tasks.module';
 
 @Module({
   imports: [
@@ -9,7 +10,8 @@ import { UsersModule } from './users/users.module';
       useClass: TypeOrmConfigService,
       inject: [TypeOrmConfigService],
     }),
-    UsersModule
+    UsersModule,
+    TasksModule,
   ],
 })
 export class AppModule implements OnModuleInit {
