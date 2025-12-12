@@ -24,7 +24,7 @@ const HomePage: Component = () => {
 
       <Teste
         text='Bom dia'
-        mainColor='#c5edd0'
+        mainColor='#00918d'
       />
 
       <div class="actions">

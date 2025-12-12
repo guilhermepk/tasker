@@ -22,7 +22,7 @@ export default function Teste({ mainColor, text }: TesteProps) {
 
     const luminance = 0.299 * r + 0.587 * g + 0.114 * b
 
-    return luminance > 180 ? "#000" : "#fff"
+    return luminance > 125 ? "#000" : "#fff"
   }
 
   return (
