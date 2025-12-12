@@ -1,6 +1,7 @@
 import { createSignal, type Component } from 'solid-js'
 import Versions from '../components/Versions'
 import electronLogo from '../assets/electron.svg'
+import Teste from '@renderer/components/Teste';
 
 const HomePage: Component = () => {
   const [count, setCount] = createSignal<number>(0);
@@ -20,6 +21,11 @@ const HomePage: Component = () => {
       <p class="tip">
         O botão foi clicado <code>{count()}</code> vezes.
       </p>
+
+      <Teste
+        text='Bom dia'
+        mainColor='#c5edd0'
+      />
 
       <div class="actions">
         <div class="action">
