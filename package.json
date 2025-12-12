@@ -25,10 +25,13 @@
     "@electron-toolkit/utils": "^4.0.0",
     "@nestjs/common": "^11.1.9",
     "@nestjs/core": "^11.1.9",
+    "@nestjs/typeorm": "^11.0.0",
     "@solidjs/router": "^0.15.4",
     "@tailwindcss/vite": "^4.1.18",
     "electron-updater": "^6.3.9",
-    "tailwindcss": "^4.1.18"
+    "sqlite3": "^5.1.7",
+    "tailwindcss": "^4.1.18",
+    "typeorm": "^0.3.28"
   },
   "devDependencies": {
     "@electron-toolkit/eslint-config-prettier": "^3.0.0",
