@@ -1,4 +1,4 @@
-import { Module, OnModuleInit } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { TypeOrmConfigService } from './config/sqlite.config';
 import { UsersModule } from './users/users.module';
@@ -14,8 +14,4 @@ import { TasksModule } from './tasks/tasks.module';
     TasksModule,
   ],
 })
-export class AppModule implements OnModuleInit {
-  onModuleInit() {
-    console.log('Iniciado') 
-  }
-}
+export class AppModule {}
