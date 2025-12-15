@@ -2,6 +2,10 @@ import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity("tasks")
 export class TaskEntity {
+  constructor(data: Omit<TaskEntity, 'id' | 'completed'>){
+    Object.assign(this, data);
+  }
+
   @PrimaryGeneratedColumn()
   id: number;
  

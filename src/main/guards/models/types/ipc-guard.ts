@@ -1,0 +1,1 @@
+export type IpcGuard = () => any | Promise<any>;

@@ -1,7 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { TypeOrmConfigService } from './config/sqlite.config';
-import { UsersModule } from './users/users.module';
 import { TasksModule } from './tasks/tasks.module';
 
 @Module({
@@ -10,7 +9,6 @@ import { TasksModule } from './tasks/tasks.module';
       useClass: TypeOrmConfigService,
       inject: [TypeOrmConfigService],
     }),
-    UsersModule,
     TasksModule,
   ],
 })
