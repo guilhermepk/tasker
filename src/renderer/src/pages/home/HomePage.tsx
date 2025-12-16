@@ -90,20 +90,17 @@ export default function HomePage() {
     taskList: Array<TaskData>,
     taskId: number
   ): Array<TaskData> {
-    const found = taskList.find(task => task.id === taskId);
-
-    if (found) {
-      taskList = taskList.filter(task => task.id !== taskId);
-    } else {
-      for (const task of taskList) {
-        if (task.childrenTasks.length > 0) {
-          task.childrenTasks = deleteTaskInTaskList(task.childrenTasks, taskId);
-          break;
+    return taskList
+      .filter(task => task.id !== taskId)
+      .map(task => {
+        if (task.childrenTasks && task.childrenTasks.length > 0) {
+          return {
+            ...task,
+            childrenTasks: deleteTaskInTaskList(task.childrenTasks, taskId)
+          };
         }
-      }
-    }
-
-    return taskList;
+        return task;
+      });
   }
 
   function findTask(taskList: Array<TaskData>, taskId: number): TaskData | undefined {
