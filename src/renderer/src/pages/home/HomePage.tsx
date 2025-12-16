@@ -1,7 +1,7 @@
 import { createSignal, createEffect } from 'solid-js'
 import { TaskStats } from './components/TaskStats'
 import { TaskList } from './components/TaskList'
-import { FindAllTasksResponse } from '@shared/models/responses/tasks/find-all-tasks.response'
+import { FindAllTasksResponse, TaskInFindAllTasksResponse } from '@shared/models/responses/tasks/find-all-tasks.response'
 import { IpcResponse } from '@shared/models/interfaces/ipc-response.interface'
 import { TaskData } from './components/TaskItem'
 import { CreateTaskResponse } from '@shared/models/responses/tasks/create-task.response'
@@ -19,8 +19,9 @@ export default function HomePage() {
     const response: IpcResponse<FindAllTasksResponse> = await window.api.tasks.findAll();
 
     if (response.success) {
-      const tasks = response.data.tasks;
-      setTasks(tasks);
+      const currentExpandedIds = getExpandedTaskIds(tasks());
+      const newTasks = applyExpandedState(response.data.tasks, currentExpandedIds);
+      setTasks(newTasks);
     } else setTasks([]);
 
     setLoading(false);
@@ -45,6 +46,31 @@ export default function HomePage() {
 
       window.alert(formatIpcError(response.error));
     }
+  }
+
+  function getExpandedTaskIds(taskList: TaskData[]): Set<number> {
+    const ids = new Set<number>();
+    const traverse = (items: TaskData[]) => {
+      for (const task of items) {
+        if (task.expanded) ids.add(task.id);
+        if (task.childrenTasks && task.childrenTasks.length > 0) {
+          traverse(task.childrenTasks);
+        }
+      }
+    };
+    traverse(taskList);
+    return ids;
+  }
+
+  function applyExpandedState(
+    newTasks: TaskInFindAllTasksResponse[],
+    expandedIds: Set<number>
+  ): TaskData[] {
+    return newTasks.map(task => ({
+      ...task,
+      expanded: expandedIds.has(task.id),
+      childrenTasks: applyExpandedState(task.childrenTasks || [], expandedIds)
+    }));
   }
 
   function updateTaskInTaskList(
