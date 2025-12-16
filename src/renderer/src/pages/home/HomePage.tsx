@@ -40,11 +40,24 @@ export default function HomePage() {
     else window.alert(response.error.message);
   }
 
+  function toggleTaskInTaskList(
+    taskList: Array<TaskInFindAllTasksResponse>,
+    newTaskId: number
+  ): Array<TaskInFindAllTasksResponse> {
+    return taskList.map(task => {
+      return task.id === newTaskId
+        ? { ...task, completed: !task.completed }
+        : task.childrenTasks.length > 0
+          ? { ...task, childrenTasks: toggleTaskInTaskList(task.childrenTasks, newTaskId) }
+          : task;
+    });
+  }
+
   async function handleToggle(id: number): Promise<void> {
     const response = await window.api.tasks.toggle({ id });
 
     if (response.success) {
-      setTasks(tasks().map(t => t.id === id ? { ...t, completed: !t.completed } : t));
+      setTasks(toggleTaskInTaskList(tasks(), id));
     }
     else window.alert(response.error.message);
   }

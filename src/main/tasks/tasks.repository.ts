@@ -1,5 +1,5 @@
 import { InjectRepository } from "@nestjs/typeorm";
-import { Repository } from "typeorm";
+import { IsNull, Repository } from "typeorm";
 import { TaskEntity } from "./models/entities/task.entity";
 import { DeleteResult } from "typeorm/browser";
 import { UpdateResult } from "typeorm/browser";
@@ -22,15 +22,36 @@ export class TasksTypeOrmRepository {
     return await this.repository.findOneBy({ id });
   }
 
-  async findAll(): Promise<TaskEntity[]> {    
-    const result = await this.repository.find({
+  async findAll(): Promise<TaskEntity[]> {
+    const tasks = await this.repository.find({
+      relations: {
+        fatherTask: true,
+      },
       order: {
         id: 'ASC',
       },
     });
 
-    return result;
+    const map = new Map<number, TaskEntity & { childrenTasks: TaskEntity[] }>();
+
+    tasks.forEach(task => {
+      map.set(task.id, { ...task, childrenTasks: [] });
+    });
+
+    const roots: TaskEntity[] = [];
+
+    map.forEach(task => {
+      if (task.fatherTask?.id) {
+        const parent = map.get(task.fatherTask.id);
+        parent?.childrenTasks.push(task);
+      } else {
+        roots.push(task);
+      }
+    });
+
+    return roots;
   }
+
 
   async update(newTaskData: TaskEntity): Promise<UpdateResult> {
     return await this.repository.update({ id: newTaskData.id }, newTaskData);

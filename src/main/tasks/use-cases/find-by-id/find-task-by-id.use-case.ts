@@ -16,9 +16,9 @@ export class FindTaskByIdUseCase {
     return await tryCatch(async () => {
       const foundTask: TaskEntity | null = await this.repository.findById(id);
       if (!foundTask) {
-        throw new NotFoundError('Tarefa não encontrada');
+        throw new NotFoundError(`Tarefa ${id} não encontrada`);
       }
       return foundTask;
-    }, 'Erro ao buscar tarefa');
+    }, `Erro ao buscar tarefa ${id}`);
   }
 }

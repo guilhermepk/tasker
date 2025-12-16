@@ -1,9 +1,15 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity("tasks")
 export class TaskEntity {
-  constructor(data: Omit<TaskEntity, 'id' | 'completed'>){
+  constructor(
+    data: {
+      title: string,
+      fatherTask?: TaskEntity
+    }
+  ){
     Object.assign(this, data);
+    this.completed = false;
   }
 
   @PrimaryGeneratedColumn()
@@ -14,4 +20,13 @@ export class TaskEntity {
 
   @Column({ type: 'boolean', default: false, nullable: false })
   completed: boolean;
+
+  // --{ RELAÇÕES }--
+
+  @JoinColumn({ name: 'fk_father_task' })
+  @ManyToOne(() => TaskEntity, fatherTask => fatherTask.childrenTasks, { nullable: true, onDelete: 'CASCADE' })
+  fatherTask?: TaskEntity;
+
+  @OneToMany(() => TaskEntity, childTask => childTask.fatherTask)
+  childrenTasks: TaskEntity[];
 }

@@ -1,15 +1,9 @@
 import { For } from 'solid-js'
 import { Card } from '../../../components/Card'
-import { TaskItem } from './TaskItem'
-
-interface Task {
-  id: number
-  title: string
-  completed: boolean
-}
+import { TaskItem, TaskItemData } from './TaskItem'
 
 interface Props {
-  tasks: Task[]
+  tasks: TaskItemData[]
   loading: boolean
   onToggle: (id: number) => void
   onDelete: (id: number) => void
