@@ -6,6 +6,8 @@ import { FindAllTasksResponse } from '@shared/models/responses/tasks/find-all-ta
 import { IpcResponse } from '@shared/models/interfaces/ipc-response.interface'
 import { TaskData } from './components/TaskItem'
 import { CreateTaskResponse } from '@shared/models/responses/tasks/create-task.response'
+import { IpcError } from '@shared/models/errors/ipc.error'
+import formatIpcError from '@renderer/utils/format-ipc-error'
 
 export default function HomePage() {
   const [tasks, setTasks] = createSignal<TaskData[]>([]);
@@ -37,9 +39,13 @@ export default function HomePage() {
     const response = await window.api.tasks.delete({ id });
 
     if (response.success) {
-      setTasks(tasks().filter(t => t.id !== id));
+      setTasks(deleteTaskInTaskList(tasks(), id));
     }
-    else window.alert(response.error.message);
+    else {
+
+
+      window.alert(formatIpcError(response.error));
+    }
   }
 
   function updateTaskInTaskList(
@@ -53,6 +59,26 @@ export default function HomePage() {
           ? { ...task, childrenTasks: updateTaskInTaskList(task.childrenTasks, newTaskData) }
           : task;
     });
+  }
+
+  function deleteTaskInTaskList(
+    taskList: Array<TaskData>,
+    taskId: number
+  ): Array<TaskData> {
+    const found = taskList.find(task => task.id === taskId);
+
+    if (found) {
+      taskList = taskList.filter(task => task.id !== taskId);
+    } else {
+      for (const task of taskList) {
+        if (task.childrenTasks.length > 0) {
+          task.childrenTasks = deleteTaskInTaskList(task.childrenTasks, taskId);
+          break;
+        }
+      }
+    }
+
+    return taskList;
   }
 
   async function handleUpdate(newTaskData: TaskData): Promise<void> {
