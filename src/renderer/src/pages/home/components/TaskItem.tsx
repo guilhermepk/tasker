@@ -1,6 +1,6 @@
 import { Trash2, CheckCircle2, Circle, ChevronRight, ChevronDown } from 'lucide-solid'
 import { Button } from '../../../components/Button'
-import { TaskInFindAllTasksResponse } from '@shared/models/responses/find-all-tasks.response'
+import { TaskInFindAllTasksResponse } from '@shared/models/responses/tasks/find-all-tasks.response'
 import { For } from 'solid-js'
 
 export type TaskData = TaskInFindAllTasksResponse & {

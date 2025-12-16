@@ -1,20 +1,22 @@
 import { contextBridge, ipcRenderer } from 'electron'
 import { electronAPI } from '@electron-toolkit/preload'
 import { ContextBridgeApi } from './api.interface';
+import { CreateTaskDto } from '@main/tasks/models/dtos/create-task.dto';
+import { ToggleTaskDto } from '@main/tasks/models/dtos/toggle-task.dto';
+import { DeleteTaskDto } from '@main/tasks/models/dtos/delete-task.dto';
+import { IpcResponse } from '@shared/models/interfaces/ipc-response.interface';
+import { FindAllTasksResponse } from '@shared/models/responses/tasks/find-all-tasks.response';
+import { CreateTaskResponse } from '@shared/models/responses/tasks/create-task.response';
 
-// Custom APIs for renderer
 const api: ContextBridgeApi = {
   tasks: {
-    findAll: () => ipcRenderer.invoke('tasks:findAll'),
-    create: (title: string) => ipcRenderer.invoke('tasks:create', title),
-    toggle: (id: number) => ipcRenderer.invoke('tasks:toggle', id),
-    delete: (id: number) => ipcRenderer.invoke('tasks:delete', id),
+    findAll: (): Promise<IpcResponse<FindAllTasksResponse>> => ipcRenderer.invoke('tasks:findAll'),
+    create: (payload: CreateTaskDto): Promise<IpcResponse<CreateTaskResponse>> => ipcRenderer.invoke('tasks:create', payload),
+    toggle: (payload: ToggleTaskDto): Promise<IpcResponse<{ message: string }>> => ipcRenderer.invoke('tasks:toggle', payload),
+    delete: (payload: DeleteTaskDto): Promise<IpcResponse<{ message: string }>> => ipcRenderer.invoke('tasks:delete', payload),
   }
 }
 
-// Use `contextBridge` APIs to expose Electron APIs to
-// renderer only if context isolation is enabled, otherwise
-// just add to the DOM global.
 if (process.contextIsolated) {
   try {
     contextBridge.exposeInMainWorld('electron', electronAPI)

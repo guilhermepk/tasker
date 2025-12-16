@@ -2,9 +2,10 @@ import { createSignal, createEffect } from 'solid-js'
 import { TaskStats } from './components/TaskStats'
 import { TaskForm } from './components/TaskForm'
 import { TaskList } from './components/TaskList'
-import { FindAllTasksResponse } from '@shared/models/responses/find-all-tasks.response'
+import { FindAllTasksResponse } from '@shared/models/responses/tasks/find-all-tasks.response'
 import { IpcResponse } from '@shared/models/interfaces/ipc-response.interface'
 import { TaskData } from './components/TaskItem'
+import { CreateTaskResponse } from '@shared/models/responses/tasks/create-task.response'
 
 export default function HomePage() {
   const [tasks, setTasks] = createSignal<TaskData[]>([]);
@@ -67,11 +68,11 @@ export default function HomePage() {
     e.preventDefault();
     if (!newTaskTitle().trim()) return;
 
-    const response: IpcResponse<{ message: string }> = await window.api.tasks.create({ title: newTaskTitle() });
+    const response: IpcResponse<CreateTaskResponse> = await window.api.tasks.create({ title: newTaskTitle() });
 
     if (response.success) {
       setNewTaskTitle('');
-      await fetchTasks();
+      setTasks(prev => [...prev, response.data]);
     } else {
       window.alert(response.error.message);
     }
