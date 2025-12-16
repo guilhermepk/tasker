@@ -6,7 +6,6 @@ import { TaskForm } from './TaskForm'
 
 export type TaskData = TaskInFindAllTasksResponse & {
   expanded?: boolean,
-  isAdding?: boolean,
   childrenTasks: TaskData[]
 }
 
@@ -15,22 +14,35 @@ interface TaskItemProps {
   onUpdate: (newTaskData: TaskData) => void
   onDelete: (id: number) => void
   onAddSubtask: (parentId: number, title: string) => void
+  subtaskFormTaskId: number | null
+  onSetSubtaskFormTaskId: (id: number | null) => void
 }
 
 export function TaskItem({
-  task, onDelete, onUpdate, onAddSubtask
+  task, onDelete, onUpdate, onAddSubtask, subtaskFormTaskId, onSetSubtaskFormTaskId
 }: TaskItemProps) {
   const [newSubtaskTitle, setNewSubtaskTitle] = createSignal('');
 
+  const isAdding = () => subtaskFormTaskId === task.id;
   const hasSubtasks = () => task.childrenTasks && task.childrenTasks.length > 0
-  const showSubtasks = () => (task.expanded && hasSubtasks()) || task.isAdding;
+  const showSubtasks = () => (task.expanded && hasSubtasks()) || isAdding();
 
   function handleSubmitSubtask(e: Event) {
     e.preventDefault();
     if (newSubtaskTitle().trim()) {
       onAddSubtask(task.id, newSubtaskTitle());
       setNewSubtaskTitle('');
-      // No need to reset isAdding explicitly if parent refreshes data
+      onSetSubtaskFormTaskId(null); // Close the form
+    }
+  }
+
+  function handleToggleAddSubtask(e: MouseEvent) {
+    e.stopPropagation();
+    if (isAdding()) {
+      onSetSubtaskFormTaskId(null);
+    } else {
+      onSetSubtaskFormTaskId(task.id);
+      onUpdate({ ...task, expanded: true }); // Ensure expanded
     }
   }
 
@@ -92,10 +104,7 @@ export function TaskItem({
             class='cursor-pointer hover:text-purple-400'
             variant="ghost"
             size="icon"
-            onClick={(e) => {
-              e.stopPropagation()
-              onUpdate({ ...task, expanded: true, isAdding: !task.isAdding });
-            }}
+            onClick={handleToggleAddSubtask}
             title='Adicionar sub-tarefa'
           >
             <Plus class="w-5 h-5" />
@@ -131,7 +140,7 @@ export function TaskItem({
 
       {showSubtasks() && (
         <div class="ml-8 border-l border-slate-700">
-          {task.isAdding && (
+          {isAdding() && (
             <div class="pl-4 py-2">
               <TaskForm
                 value={newSubtaskTitle}
@@ -148,6 +157,8 @@ export function TaskItem({
                 onUpdate={onUpdate}
                 onDelete={onDelete}
                 onAddSubtask={onAddSubtask}
+                subtaskFormTaskId={subtaskFormTaskId}
+                onSetSubtaskFormTaskId={onSetSubtaskFormTaskId}
               />
             )}
           </For>

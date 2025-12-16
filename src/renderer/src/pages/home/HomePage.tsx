@@ -12,6 +12,7 @@ export default function HomePage() {
   const [tasks, setTasks] = createSignal<TaskData[]>([]);
   const [loading, setLoading] = createSignal(false);
   const [newTaskTitle, setNewTaskTitle] = createSignal('');
+  const [subtaskFormTaskId, setSubtaskFormTaskId] = createSignal<number | null>(null);
 
   async function fetchTasks(): Promise<void> {
     setLoading(true);
@@ -130,6 +131,8 @@ export default function HomePage() {
 
     if (response.success) {
       await fetchTasks();
+      setSubtaskFormTaskId(null); // Close form on success
+
     } else {
       window.alert(formatIpcError(response.error));
     }
@@ -152,6 +155,9 @@ export default function HomePage() {
           onNewTaskTitleChange={setNewTaskTitle}
           onTaskCreate={handleCreate}
           onAddSubtask={handleAddSubtask}
+          subtaskFormTaskId={subtaskFormTaskId()}
+          onSetSubtaskFormTaskId={setSubtaskFormTaskId}
+
         />
 
         <p class="text-center text-gray-500 text-sm mt-8">

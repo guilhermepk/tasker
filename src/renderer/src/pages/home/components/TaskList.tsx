@@ -12,6 +12,8 @@ interface Props {
   onNewTaskTitleChange: (v: string) => void
   onTaskCreate: (e: Event) => void
   onAddSubtask: (parentId: number, title: string) => void
+  subtaskFormTaskId: number | null
+  onSetSubtaskFormTaskId: (id: number | null) => void
 }
 
 export function TaskList(props: Props) {
@@ -38,6 +40,8 @@ export function TaskList(props: Props) {
             onUpdate={props.onUpdate}
             onDelete={props.onDelete}
             onAddSubtask={props.onAddSubtask}
+            subtaskFormTaskId={props.subtaskFormTaskId}
+            onSetSubtaskFormTaskId={props.onSetSubtaskFormTaskId}
           />
         )}
       </For>
