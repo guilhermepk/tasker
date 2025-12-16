@@ -86,7 +86,7 @@ export default function HomePage() {
     if (response.success) {
       setTasks(updateTaskInTaskList(tasks(), newTaskData));
     }
-    else window.alert(response.error.message);
+    else window.alert(formatIpcError(response.error));
   }
 
   async function handleCreate(e: Event) {
@@ -99,7 +99,7 @@ export default function HomePage() {
       setNewTaskTitle('');
       setTasks(prev => [...prev, response.data]);
     } else {
-      window.alert(response.error.message);
+      window.alert(formatIpcError(response.error));
     }
   }
 
