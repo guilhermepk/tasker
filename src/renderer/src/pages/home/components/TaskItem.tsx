@@ -20,6 +20,8 @@ interface TaskItemProps {
 
 export function TaskItem(props: TaskItemProps) {
   const [newSubtaskTitle, setNewSubtaskTitle] = createSignal('');
+  const [isEditing, setIsEditing] = createSignal(false);
+  const [editTitle, setEditTitle] = createSignal('');
 
   const isAdding = () => props.subtaskFormTaskId === props.task.id;
   const hasSubtasks = () => props.task.childrenTasks && props.task.childrenTasks.length > 0
@@ -50,6 +52,23 @@ export function TaskItem(props: TaskItemProps) {
       props.onSetSubtaskFormTaskId(props.task.id);
       props.onUpdate({ ...props.task, expanded: true }); // Ensure expanded
     }
+  }
+
+  function handleStartEdit(e: MouseEvent) {
+    e.stopPropagation();
+    setEditTitle(props.task.title);
+    setIsEditing(true);
+  }
+
+  function handleSaveEdit() {
+    if (editTitle().trim() && editTitle() !== props.task.title) {
+      props.onUpdate({ ...props.task, title: editTitle() });
+    }
+    setIsEditing(false);
+  }
+
+  function handleCancelEdit() {
+    setIsEditing(false);
   }
 
   return (
@@ -94,15 +113,30 @@ export function TaskItem(props: TaskItemProps) {
             )}
           </div>
 
-          <span
-            class={
-              props.task.completed
-                ? 'line-through text-gray-500 group-hover:no-underline group-hover:text-gray-400 transition-all duration-200'
-                : 'text-gray-200 group-hover:line-through group-hover:text-gray-400 transition-all duration-200'
-            }
-          >
-            {props.task.title}
-          </span>
+          {isEditing() ? (
+            <input
+              ref={(el) => setTimeout(() => el.focus(), 0)}
+              value={editTitle()}
+              onInput={(e) => setEditTitle(e.currentTarget.value)}
+              onBlur={handleSaveEdit}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') handleSaveEdit();
+                if (e.key === 'Escape') handleCancelEdit();
+              }}
+              class="bg-transparent text-gray-200 border-b border-blue-500 focus:outline-none p-0 w-full text-base rounded-none"
+              onClick={(e) => e.stopPropagation()}
+            />
+          ) : (
+            <span
+              class={
+                props.task.completed
+                  ? 'line-through text-gray-500 group-hover:no-underline group-hover:text-gray-400 transition-all duration-200'
+                  : 'text-gray-200 group-hover:line-through group-hover:text-gray-400 transition-all duration-200'
+              }
+            >
+              {props.task.title}
+            </span>
+          )}
         </div>
 
         <div class="flex gap-2">
@@ -120,10 +154,7 @@ export function TaskItem(props: TaskItemProps) {
             class='cursor-pointer hover:text-blue-400'
             variant="ghost"
             size="icon"
-            onClick={(e) => {
-              e.stopPropagation()
-              window.alert("Editar tarefa " + props.task.title)
-            }}
+            onClick={handleStartEdit}
             title='Editar tarefa'
           >
             <Pencil class="w-5 h-5" />

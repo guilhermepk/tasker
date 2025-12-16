@@ -118,11 +118,19 @@ export default function HomePage() {
     const currentTask = findTask(tasks(), newTaskData.id);
 
     // Only toggle on server if completed status changed
-    if (currentTask && currentTask.completed !== newTaskData.completed) {
-      const response = await window.api.tasks.update({
-        id: newTaskData.id,
-        completed: newTaskData.completed
-      });
+    // Check if either completed status or title changed
+    if (currentTask && (currentTask.completed !== newTaskData.completed || currentTask.title !== newTaskData.title)) {
+      const updateData: any = { id: newTaskData.id };
+
+      if (currentTask.completed !== newTaskData.completed) {
+        updateData.completed = newTaskData.completed;
+      }
+
+      if (currentTask.title !== newTaskData.title) {
+        updateData.title = newTaskData.title;
+      }
+
+      const response = await window.api.tasks.update(updateData);
       if (!response.success) {
         window.alert(formatIpcError(response.error));
         return; // Don't update UI if server failed
