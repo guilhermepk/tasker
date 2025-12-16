@@ -1,28 +1,28 @@
 import { IpcResponse } from "@shared/models/interfaces/ipc-response.interface";
 import createIpcHandler from "../../../common/utils/create-ipc-handler";
-import { ToggleTaskDto } from "../../models/dtos/toggle-task.dto";
-import { ToggleTaskUseCase } from "./toggle-task.use-case";
+import { UpdateTaskDto } from "../../models/dtos/update-task.dto";
+import { UpdateTaskUseCase } from "./update-task.use-case";
 
-export function registerToggleTaskIpc(): void {
+export function registerUpdateTaskIpc(): void {
   async function handler(
-    payload: ToggleTaskDto,
-    useCase: ToggleTaskUseCase
+    payload: UpdateTaskDto,
+    useCase: UpdateTaskUseCase
   ): Promise<IpcResponse<{ message: string }>> {
     await useCase.execute(payload);
     return {
       success: true,
       data: {
-        message: 'Tarefa alternada com sucesso'
+        message: 'Tarefa atualizada com sucesso'
       }
     }
   }
 
   createIpcHandler(
-    'tasks:toggle',
+    'tasks:update',
     handler,
     {
-      dtoClass: ToggleTaskDto,
-      useCaseClass: ToggleTaskUseCase,
+      dtoClass: UpdateTaskDto,
+      useCaseClass: UpdateTaskUseCase,
     }
   );
 }

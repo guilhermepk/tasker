@@ -2,7 +2,7 @@ import { contextBridge, ipcRenderer } from 'electron'
 import { electronAPI } from '@electron-toolkit/preload'
 import { ContextBridgeApi } from './api.interface';
 import { CreateTaskDto } from '@main/tasks/models/dtos/create-task.dto';
-import { ToggleTaskDto } from '@main/tasks/models/dtos/toggle-task.dto';
+import { UpdateTaskDto } from '@main/tasks/models/dtos/update-task.dto';
 import { DeleteTaskDto } from '@main/tasks/models/dtos/delete-task.dto';
 import { IpcResponse } from '@shared/models/interfaces/ipc-response.interface';
 import { FindAllTasksResponse } from '@shared/models/responses/tasks/find-all-tasks.response';
@@ -12,7 +12,7 @@ const api: ContextBridgeApi = {
   tasks: {
     findAll: (): Promise<IpcResponse<FindAllTasksResponse>> => ipcRenderer.invoke('tasks:findAll'),
     create: (payload: CreateTaskDto): Promise<IpcResponse<CreateTaskResponse>> => ipcRenderer.invoke('tasks:create', payload),
-    toggle: (payload: ToggleTaskDto): Promise<IpcResponse<{ message: string }>> => ipcRenderer.invoke('tasks:toggle', payload),
+    update: (payload: UpdateTaskDto): Promise<IpcResponse<{ message: string }>> => ipcRenderer.invoke('tasks:update', payload),
     delete: (payload: DeleteTaskDto): Promise<IpcResponse<{ message: string }>> => ipcRenderer.invoke('tasks:delete', payload),
   }
 }

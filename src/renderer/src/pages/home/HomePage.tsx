@@ -1,6 +1,5 @@
 import { createSignal, createEffect } from 'solid-js'
 import { TaskStats } from './components/TaskStats'
-
 import { TaskList } from './components/TaskList'
 import { FindAllTasksResponse } from '@shared/models/responses/tasks/find-all-tasks.response'
 import { IpcResponse } from '@shared/models/interfaces/ipc-response.interface'
@@ -97,7 +96,10 @@ export default function HomePage() {
 
     // Only toggle on server if completed status changed
     if (currentTask && currentTask.completed !== newTaskData.completed) {
-      const response = await window.api.tasks.toggle({ id: newTaskData.id });
+      const response = await window.api.tasks.update({
+        id: newTaskData.id,
+        completed: newTaskData.completed
+      });
       if (!response.success) {
         window.alert(formatIpcError(response.error));
         return; // Don't update UI if server failed

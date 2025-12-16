@@ -1,13 +1,12 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable, Inject } from "@nestjs/common";
 import { TasksTypeOrmRepository } from "../../tasks.repository";
-import { ToggleTaskDto } from "../../models/dtos/toggle-task.dto";
+import { UpdateTaskDto } from "../../models/dtos/update-task.dto";
 import { TaskEntity } from "../../models/entities/task.entity";
 import { tryCatch } from "../../../common/utils/try-catch";
 import { FindTaskByIdUseCase } from "../find-by-id/find-task-by-id.use-case";
-import { Inject } from "@nestjs/common";
 
 @Injectable()
-export class ToggleTaskUseCase {
+export class UpdateTaskUseCase {
   constructor(
     @Inject(TasksTypeOrmRepository)
     private readonly repository: TasksTypeOrmRepository,
@@ -15,13 +14,12 @@ export class ToggleTaskUseCase {
     private readonly findTaskByIdUseCase: FindTaskByIdUseCase,
   ){}
 
-  async execute(data: ToggleTaskDto): Promise<void> {
+  async execute(data: UpdateTaskDto): Promise<void> {
     return await tryCatch(async () => {
       const task: TaskEntity = await this.findTaskByIdUseCase.execute(data.id);
-
-      task.completed = !task.completed;
+      Object.assign(task, data);
 
       await this.repository.update(task);
-    }, `Erro ao alternar tarefa`);
+    }, `Erro ao atualizar tarefa`);
   }
 }

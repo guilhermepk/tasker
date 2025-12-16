@@ -25,6 +25,7 @@
     "@electron-toolkit/utils": "^4.0.0",
     "@nestjs/common": "^11.1.9",
     "@nestjs/core": "^11.1.9",
+    "@nestjs/mapped-types": "^2.1.0",
     "@nestjs/typeorm": "^11.0.0",
     "@solidjs/router": "^0.15.4",
     "@tailwindcss/vite": "^4.1.18",
