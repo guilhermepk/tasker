@@ -18,9 +18,18 @@ export function TaskForm(props: Props) {
           value={props.value()}
           onInput={e => props.onChange(e.currentTarget.value)}
           placeholder="Adicionar nova tarefa..."
-          class="flex-1 h-12"
+          class={`
+            flex-1
+            h-12
+            active:border-purple-500 focus-visible:ring-2 focus-visible:ring-purple-500 focus-visible:outline-none
+            rounded-[10px]
+            px-4
+            hover:border hover:border-purple-500
+          `}
         />
-        <Button type="submit" class="h-12 px-6">
+        <Button
+          type="submit"
+          class="h-12 px-6 cursor-pointer hover:bg-purple-500">
           <Plus class="w-5 h-5 mr-2" />
           Adicionar
         </Button>
