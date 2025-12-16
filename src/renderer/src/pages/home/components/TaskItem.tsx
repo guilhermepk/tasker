@@ -18,31 +18,29 @@ interface TaskItemProps {
   onSetSubtaskFormTaskId: (id: number | null) => void
 }
 
-export function TaskItem({
-  task, onDelete, onUpdate, onAddSubtask, subtaskFormTaskId, onSetSubtaskFormTaskId
-}: TaskItemProps) {
+export function TaskItem(props: TaskItemProps) {
   const [newSubtaskTitle, setNewSubtaskTitle] = createSignal('');
 
-  const isAdding = () => subtaskFormTaskId === task.id;
-  const hasSubtasks = () => task.childrenTasks && task.childrenTasks.length > 0
-  const showSubtasks = () => (task.expanded && hasSubtasks()) || isAdding();
+  const isAdding = () => props.subtaskFormTaskId === props.task.id;
+  const hasSubtasks = () => props.task.childrenTasks && props.task.childrenTasks.length > 0
+  const showSubtasks = () => (props.task.expanded && hasSubtasks()) || isAdding();
 
   function handleSubmitSubtask(e: Event) {
     e.preventDefault();
     if (newSubtaskTitle().trim()) {
-      onAddSubtask(task.id, newSubtaskTitle());
+      props.onAddSubtask(props.task.id, newSubtaskTitle());
       setNewSubtaskTitle('');
-      onSetSubtaskFormTaskId(null); // Close the form
+      props.onSetSubtaskFormTaskId(null); // Close the form
     }
   }
 
   function handleToggleAddSubtask(e: MouseEvent) {
     e.stopPropagation();
     if (isAdding()) {
-      onSetSubtaskFormTaskId(null);
+      props.onSetSubtaskFormTaskId(null);
     } else {
-      onSetSubtaskFormTaskId(task.id);
-      onUpdate({ ...task, expanded: true }); // Ensure expanded
+      props.onSetSubtaskFormTaskId(props.task.id);
+      props.onUpdate({ ...props.task, expanded: true }); // Ensure expanded
     }
   }
 
@@ -50,10 +48,10 @@ export function TaskItem({
     <div class="w-full">
       <div
         class="group p-4 flex items-center justify-between hover:bg-slate-700/30 cursor-pointer"
-        title={task.completed ? 'Tornar pendente' : 'Concluir'}
+        title={props.task.completed ? 'Tornar pendente' : 'Concluir'}
         onClick={(e) => {
           e.stopPropagation();
-          onUpdate({ ...task, completed: !task.completed });
+          props.onUpdate({ ...props.task, completed: !props.task.completed });
         }}
       >
         <div class="flex items-center gap-4 grow py-2 -my-2">
@@ -61,12 +59,12 @@ export function TaskItem({
             <button
               onClick={(e) => {
                 e.stopPropagation();
-                onUpdate({ ...task, expanded: !!!task.expanded });
+                props.onUpdate({ ...props.task, expanded: !!!props.task.expanded });
               }}
               class="p-1 -ml-2 rounded hover:bg-slate-600 transition-colors duration-200"
-              title={task.expanded ? 'Colapsar sub-tarefas' : 'Expandir sub-tarefas'}
+              title={props.task.expanded ? 'Colapsar sub-tarefas' : 'Expandir sub-tarefas'}
             >
-              {task.expanded ? (
+              {props.task.expanded ? (
                 <ChevronDown class="w-4 h-4 text-gray-400" />
               ) : (
                 <ChevronRight class="w-4 h-4 text-gray-400" />
@@ -75,7 +73,7 @@ export function TaskItem({
           )}
 
           <div class="relative">
-            {task.completed ? (
+            {props.task.completed ? (
               <>
                 <CheckCircle2 class="w-6 h-6 text-green-400 group-hover:opacity-0 transition-opacity duration-200" />
                 <Circle class="w-6 h-6 text-gray-600 absolute top-0 left-0 opacity-0 group-hover:opacity-25 transition-opacity duration-200" />
@@ -90,12 +88,12 @@ export function TaskItem({
 
           <span
             class={
-              task.completed
+              props.task.completed
                 ? 'line-through text-gray-500 group-hover:no-underline group-hover:text-gray-400 transition-all duration-200'
                 : 'text-gray-200 group-hover:line-through group-hover:text-gray-400 transition-all duration-200'
             }
           >
-            {task.title}
+            {props.task.title}
           </span>
         </div>
 
@@ -116,7 +114,7 @@ export function TaskItem({
             size="icon"
             onClick={(e) => {
               e.stopPropagation()
-              window.alert("Editar tarefa " + task.title)
+              window.alert("Editar tarefa " + props.task.title)
             }}
             title='Editar tarefa'
           >
@@ -129,7 +127,7 @@ export function TaskItem({
             size="icon"
             onClick={(e) => {
               e.stopPropagation()
-              onDelete(task.id)
+              props.onDelete(props.task.id)
             }}
             title='Excluir tarefa'
           >
@@ -150,15 +148,15 @@ export function TaskItem({
               />
             </div>
           )}
-          <For each={task.childrenTasks}>
+          <For each={props.task.childrenTasks}>
             {(subtask) => (
               <TaskItem
                 task={subtask}
-                onUpdate={onUpdate}
-                onDelete={onDelete}
-                onAddSubtask={onAddSubtask}
-                subtaskFormTaskId={subtaskFormTaskId}
-                onSetSubtaskFormTaskId={onSetSubtaskFormTaskId}
+                onUpdate={props.onUpdate}
+                onDelete={props.onDelete}
+                onAddSubtask={props.onAddSubtask}
+                subtaskFormTaskId={props.subtaskFormTaskId}
+                onSetSubtaskFormTaskId={props.onSetSubtaskFormTaskId}
               />
             )}
           </For>
