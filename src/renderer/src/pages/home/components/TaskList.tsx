@@ -1,9 +1,10 @@
 import { For } from 'solid-js'
 import { Card } from '../../../components/Card'
-import { TaskItem, TaskItemData } from './TaskItem'
+import { TaskItem } from './TaskItem'
+import { TaskInFindAllTasksResponse } from '@shared/models/responses/find-all-tasks.response'
 
 interface Props {
-  tasks: TaskItemData[]
+  tasks: TaskInFindAllTasksResponse[]
   loading: boolean
   onToggle: (id: number) => void
   onDelete: (id: number) => void

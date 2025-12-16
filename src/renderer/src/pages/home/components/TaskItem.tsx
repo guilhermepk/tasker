@@ -3,13 +3,8 @@ import { Button } from '../../../components/Button'
 import { TaskInFindAllTasksResponse } from '@shared/models/responses/find-all-tasks.response'
 import { createSignal, For } from 'solid-js'
 
-export type TaskItemData = TaskInFindAllTasksResponse & {
-  expanded?: boolean,
-  childrenTasks: TaskItemData[]
-}
-
 interface TaskItemProps {
-  task: TaskItemData
+  task: TaskInFindAllTasksResponse
   onToggle: (id: number) => void
   onDelete: (id: number) => void
 }
@@ -17,7 +12,7 @@ interface TaskItemProps {
 export function TaskItem({
   task, onDelete, onToggle
 }: TaskItemProps) {
-  const [isExpanded, setIsExpanded] = createSignal<boolean>(task.expanded ?? false)
+  const [isExpanded, setIsExpanded] = createSignal<boolean>(false)
 
   const hasSubtasks = () => task.childrenTasks && task.childrenTasks.length > 0
 
