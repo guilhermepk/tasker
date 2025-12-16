@@ -1,19 +1,22 @@
 import { Trash2, CheckCircle2, Circle, ChevronRight, ChevronDown } from 'lucide-solid'
 import { Button } from '../../../components/Button'
 import { TaskInFindAllTasksResponse } from '@shared/models/responses/find-all-tasks.response'
-import { createSignal, For } from 'solid-js'
+import { For } from 'solid-js'
+
+export type TaskData = TaskInFindAllTasksResponse & {
+  expanded?: boolean,
+  childrenTasks: TaskData[]
+}
 
 interface TaskItemProps {
-  task: TaskInFindAllTasksResponse
-  onToggle: (id: number) => void
+  task: TaskData
+  onUpdate: (newTaskData: TaskData) => void
   onDelete: (id: number) => void
 }
 
 export function TaskItem({
-  task, onDelete, onToggle
+  task, onDelete, onUpdate
 }: TaskItemProps) {
-  const [isExpanded, setIsExpanded] = createSignal<boolean>(false)
-
   const hasSubtasks = () => task.childrenTasks && task.childrenTasks.length > 0
 
   return (
@@ -23,7 +26,7 @@ export function TaskItem({
         title={task.completed ? 'Tornar pendente' : 'Concluir'}
         onClick={(e) => {
           e.stopPropagation();
-          onToggle(task.id);
+          onUpdate({ ...task, completed: !task.completed });
         }}
       >
         <div class="flex items-center gap-4 grow py-2 -my-2">
@@ -31,12 +34,12 @@ export function TaskItem({
             <button
               onClick={(e) => {
                 e.stopPropagation();
-                setIsExpanded(!isExpanded());
+                onUpdate({ ...task, expanded: !!!task.expanded });
               }}
               class="p-1 -ml-2 rounded hover:bg-slate-600 transition-colors duration-200"
-              title={isExpanded() ? 'Colapsar sub-tarefas' : 'Expandir sub-tarefas'}
+              title={task.expanded ? 'Colapsar sub-tarefas' : 'Expandir sub-tarefas'}
             >
-              {isExpanded() ? (
+              {task.expanded ? (
                 <ChevronDown class="w-4 h-4 text-gray-400" />
               ) : (
                 <ChevronRight class="w-4 h-4 text-gray-400" />
@@ -83,13 +86,13 @@ export function TaskItem({
         </Button>
       </div>
 
-      {isExpanded() && hasSubtasks() && (
+      {task.expanded && hasSubtasks() && (
         <div class="ml-8 border-l border-slate-700">
           <For each={task.childrenTasks}>
             {(subtask) => (
               <TaskItem
                 task={subtask}
-                onToggle={onToggle}
+                onUpdate={onUpdate}
                 onDelete={onDelete}
               />
             )}

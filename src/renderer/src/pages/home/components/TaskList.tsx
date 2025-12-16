@@ -1,12 +1,12 @@
 import { For } from 'solid-js'
 import { Card } from '../../../components/Card'
 import { TaskItem } from './TaskItem'
-import { TaskInFindAllTasksResponse } from '@shared/models/responses/find-all-tasks.response'
+import { TaskData } from './TaskItem'
 
 interface Props {
-  tasks: TaskInFindAllTasksResponse[]
+  tasks: TaskData[]
   loading: boolean
-  onToggle: (id: number) => void
+  onUpdate: (newTaskData: TaskData) => void
   onDelete: (id: number) => void
 }
 
@@ -24,7 +24,7 @@ export function TaskList(props: Props) {
         {task => (
           <TaskItem
             task={task}
-            onToggle={props.onToggle}
+            onUpdate={props.onUpdate}
             onDelete={props.onDelete}
           />
         )}

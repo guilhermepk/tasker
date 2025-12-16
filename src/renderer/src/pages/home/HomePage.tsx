@@ -2,11 +2,12 @@ import { createSignal, createEffect } from 'solid-js'
 import { TaskStats } from './components/TaskStats'
 import { TaskForm } from './components/TaskForm'
 import { TaskList } from './components/TaskList'
-import { FindAllTasksResponse, TaskInFindAllTasksResponse } from '@shared/models/responses/find-all-tasks.response'
+import { FindAllTasksResponse } from '@shared/models/responses/find-all-tasks.response'
 import { IpcResponse } from '@shared/models/interfaces/ipc-response.interface'
+import { TaskData } from './components/TaskItem'
 
 export default function HomePage() {
-  const [tasks, setTasks] = createSignal<TaskInFindAllTasksResponse[]>([]);
+  const [tasks, setTasks] = createSignal<TaskData[]>([]);
   const [loading, setLoading] = createSignal(false);
   const [newTaskTitle, setNewTaskTitle] = createSignal('');
 
@@ -41,23 +42,23 @@ export default function HomePage() {
   }
 
   function toggleTaskInTaskList(
-    taskList: Array<TaskInFindAllTasksResponse>,
-    newTaskId: number
-  ): Array<TaskInFindAllTasksResponse> {
+    taskList: Array<TaskData>,
+    newTaskData: TaskData
+  ): Array<TaskData> {
     return taskList.map(task => {
-      return task.id === newTaskId
-        ? { ...task, completed: !task.completed }
+      return task.id === newTaskData.id
+        ? newTaskData
         : task.childrenTasks.length > 0
-          ? { ...task, childrenTasks: toggleTaskInTaskList(task.childrenTasks, newTaskId) }
+          ? { ...task, childrenTasks: toggleTaskInTaskList(task.childrenTasks, newTaskData) }
           : task;
     });
   }
 
-  async function handleToggle(id: number): Promise<void> {
-    const response = await window.api.tasks.toggle({ id });
+  async function handleUpdate(newTaskData: TaskData): Promise<void> {
+    const response = await window.api.tasks.toggle({ id: newTaskData.id });
 
     if (response.success) {
-      setTasks(toggleTaskInTaskList(tasks(), id));
+      setTasks(toggleTaskInTaskList(tasks(), newTaskData));
     }
     else window.alert(response.error.message);
   }
@@ -93,7 +94,7 @@ export default function HomePage() {
         <TaskList
           tasks={tasks()}
           loading={loading()}
-          onToggle={handleToggle}
+          onUpdate={handleUpdate}
           onDelete={handleDelete}
         />
 
