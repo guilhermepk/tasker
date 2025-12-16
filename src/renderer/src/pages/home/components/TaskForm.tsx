@@ -10,30 +10,38 @@ interface Props {
   onSubmit: (e: Event) => void
 }
 
-export function TaskForm(props: Props) {
+export function TaskForm(props: Props & { noCard?: boolean }) {
+  const content = (
+    <form onSubmit={props.onSubmit} class="flex gap-3">
+      <Input
+        value={props.value()}
+        onInput={e => props.onChange(e.currentTarget.value)}
+        placeholder="Adicionar nova tarefa..."
+        class={`
+          flex-1
+          h-12
+          active:border-purple-500 focus-visible:ring-2 focus-visible:ring-purple-500 focus-visible:outline-none
+          rounded-[10px]
+          px-4
+          hover:border hover:border-purple-500
+        `}
+      />
+      <Button
+        type="submit"
+        class="h-12 px-6 cursor-pointer hover:bg-purple-500">
+        <Plus class="w-5 h-5 mr-2" />
+        Adicionar
+      </Button>
+    </form>
+  )
+
+  if (props.noCard) {
+    return <div class="p-6">{content}</div>
+  }
+
   return (
     <Card class="mb-6 p-6 bg-slate-800/50 backdrop-blur-sm shadow-lg border border-slate-700/50 rounded-[5px]">
-      <form onSubmit={props.onSubmit} class="flex gap-3">
-        <Input
-          value={props.value()}
-          onInput={e => props.onChange(e.currentTarget.value)}
-          placeholder="Adicionar nova tarefa..."
-          class={`
-            flex-1
-            h-12
-            active:border-purple-500 focus-visible:ring-2 focus-visible:ring-purple-500 focus-visible:outline-none
-            rounded-[10px]
-            px-4
-            hover:border hover:border-purple-500
-          `}
-        />
-        <Button
-          type="submit"
-          class="h-12 px-6 cursor-pointer hover:bg-purple-500">
-          <Plus class="w-5 h-5 mr-2" />
-          Adicionar
-        </Button>
-      </form>
+      {content}
     </Card>
   )
 }

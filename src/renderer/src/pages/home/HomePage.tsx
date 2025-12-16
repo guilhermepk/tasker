@@ -1,6 +1,6 @@
 import { createSignal, createEffect } from 'solid-js'
 import { TaskStats } from './components/TaskStats'
-import { TaskForm } from './components/TaskForm'
+
 import { TaskList } from './components/TaskList'
 import { FindAllTasksResponse } from '@shared/models/responses/tasks/find-all-tasks.response'
 import { IpcResponse } from '@shared/models/interfaces/ipc-response.interface'
@@ -80,13 +80,30 @@ export default function HomePage() {
     return taskList;
   }
 
-  async function handleUpdate(newTaskData: TaskData): Promise<void> {
-    const response = await window.api.tasks.toggle({ id: newTaskData.id });
-
-    if (response.success) {
-      setTasks(updateTaskInTaskList(tasks(), newTaskData));
+  function findTask(taskList: Array<TaskData>, taskId: number): TaskData | undefined {
+    for (const task of taskList) {
+      if (task.id === taskId) return task;
+      if (task.childrenTasks.length > 0) {
+        const found = findTask(task.childrenTasks, taskId);
+        if (found) return found;
+      }
     }
-    else window.alert(formatIpcError(response.error));
+    return undefined;
+  }
+
+  async function handleUpdate(newTaskData: TaskData): Promise<void> {
+    const currentTask = findTask(tasks(), newTaskData.id);
+
+    // Only toggle on server if completed status changed
+    if (currentTask && currentTask.completed !== newTaskData.completed) {
+      const response = await window.api.tasks.toggle({ id: newTaskData.id });
+      if (!response.success) {
+        window.alert(formatIpcError(response.error));
+        return; // Don't update UI if server failed
+      }
+    }
+
+    setTasks(updateTaskInTaskList(tasks(), newTaskData));
   }
 
   async function handleCreate(e: Event) {
@@ -103,6 +120,21 @@ export default function HomePage() {
     }
   }
 
+  async function handleAddSubtask(parentId: number, title: string) {
+    if (!title.trim()) return;
+
+    const response: IpcResponse<CreateTaskResponse> = await window.api.tasks.create({
+      title,
+      fatherTaskId: parentId
+    });
+
+    if (response.success) {
+      await fetchTasks();
+    } else {
+      window.alert(formatIpcError(response.error));
+    }
+  }
+
   return (
     <div class="min-h-screen w-screen bg-linear-to-br from-slate-950 via-slate-900 to-indigo-950 py-12 px-4">
       <div class="max-w-2xl mx-auto">
@@ -111,17 +143,15 @@ export default function HomePage() {
           total={tasks().length}
         />
 
-        <TaskForm
-          value={newTaskTitle}
-          onChange={setNewTaskTitle}
-          onSubmit={handleCreate}
-        />
-
         <TaskList
           tasks={tasks()}
           loading={loading()}
           onUpdate={handleUpdate}
           onDelete={handleDelete}
+          newTaskTitle={newTaskTitle}
+          onNewTaskTitleChange={setNewTaskTitle}
+          onTaskCreate={handleCreate}
+          onAddSubtask={handleAddSubtask}
         />
 
         <p class="text-center text-gray-500 text-sm mt-8">

@@ -1,10 +1,12 @@
-import { Trash2, CheckCircle2, Circle, ChevronRight, ChevronDown } from 'lucide-solid'
+import { Trash2, CheckCircle2, Circle, ChevronRight, ChevronDown, Plus, Pencil } from 'lucide-solid'
 import { Button } from '../../../components/Button'
 import { TaskInFindAllTasksResponse } from '@shared/models/responses/tasks/find-all-tasks.response'
-import { For } from 'solid-js'
+import { For, createSignal } from 'solid-js'
+import { TaskForm } from './TaskForm'
 
 export type TaskData = TaskInFindAllTasksResponse & {
   expanded?: boolean,
+  isAdding?: boolean,
   childrenTasks: TaskData[]
 }
 
@@ -12,12 +14,25 @@ interface TaskItemProps {
   task: TaskData
   onUpdate: (newTaskData: TaskData) => void
   onDelete: (id: number) => void
+  onAddSubtask: (parentId: number, title: string) => void
 }
 
 export function TaskItem({
-  task, onDelete, onUpdate
+  task, onDelete, onUpdate, onAddSubtask
 }: TaskItemProps) {
+  const [newSubtaskTitle, setNewSubtaskTitle] = createSignal('');
+
   const hasSubtasks = () => task.childrenTasks && task.childrenTasks.length > 0
+  const showSubtasks = () => (task.expanded && hasSubtasks()) || task.isAdding;
+
+  function handleSubmitSubtask(e: Event) {
+    e.preventDefault();
+    if (newSubtaskTitle().trim()) {
+      onAddSubtask(task.id, newSubtaskTitle());
+      setNewSubtaskTitle('');
+      // No need to reset isAdding explicitly if parent refreshes data
+    }
+  }
 
   return (
     <div class="w-full">
@@ -72,28 +87,67 @@ export function TaskItem({
           </span>
         </div>
 
-        <Button
-          class='cursor-pointer hover:text-[red]'
-          variant="ghost"
-          size="icon"
-          onClick={(e) => {
-            e.stopPropagation()
-            onDelete(task.id)
-          }}
-          title='Excluir tarefa'
-        >
-          <Trash2 class="w-5 h-5" />
-        </Button>
+        <div class="flex gap-2">
+          <Button
+            class='cursor-pointer hover:text-purple-400'
+            variant="ghost"
+            size="icon"
+            onClick={(e) => {
+              e.stopPropagation()
+              onUpdate({ ...task, expanded: true, isAdding: !task.isAdding });
+            }}
+            title='Adicionar sub-tarefa'
+          >
+            <Plus class="w-5 h-5" />
+          </Button>
+
+          <Button
+            class='cursor-pointer hover:text-blue-400'
+            variant="ghost"
+            size="icon"
+            onClick={(e) => {
+              e.stopPropagation()
+              window.alert("Editar tarefa " + task.title)
+            }}
+            title='Editar tarefa'
+          >
+            <Pencil class="w-5 h-5" />
+          </Button>
+
+          <Button
+            class='cursor-pointer hover:text-[red]'
+            variant="ghost"
+            size="icon"
+            onClick={(e) => {
+              e.stopPropagation()
+              onDelete(task.id)
+            }}
+            title='Excluir tarefa'
+          >
+            <Trash2 class="w-5 h-5" />
+          </Button>
+        </div>
       </div>
 
-      {task.expanded && hasSubtasks() && (
+      {showSubtasks() && (
         <div class="ml-8 border-l border-slate-700">
+          {task.isAdding && (
+            <div class="pl-4 py-2">
+              <TaskForm
+                value={newSubtaskTitle}
+                onChange={setNewSubtaskTitle}
+                onSubmit={handleSubmitSubtask}
+                noCard
+              />
+            </div>
+          )}
           <For each={task.childrenTasks}>
             {(subtask) => (
               <TaskItem
                 task={subtask}
                 onUpdate={onUpdate}
                 onDelete={onDelete}
+                onAddSubtask={onAddSubtask}
               />
             )}
           </For>
