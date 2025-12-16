@@ -6,7 +6,6 @@ import { FindAllTasksResponse } from '@shared/models/responses/tasks/find-all-ta
 import { IpcResponse } from '@shared/models/interfaces/ipc-response.interface'
 import { TaskData } from './components/TaskItem'
 import { CreateTaskResponse } from '@shared/models/responses/tasks/create-task.response'
-import { IpcError } from '@shared/models/errors/ipc.error'
 import formatIpcError from '@renderer/utils/format-ipc-error'
 
 export default function HomePage() {
