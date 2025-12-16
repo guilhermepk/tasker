@@ -41,7 +41,7 @@ export default function HomePage() {
     else window.alert(response.error.message);
   }
 
-  function toggleTaskInTaskList(
+  function updateTaskInTaskList(
     taskList: Array<TaskData>,
     newTaskData: TaskData
   ): Array<TaskData> {
@@ -49,7 +49,7 @@ export default function HomePage() {
       return task.id === newTaskData.id
         ? newTaskData
         : task.childrenTasks.length > 0
-          ? { ...task, childrenTasks: toggleTaskInTaskList(task.childrenTasks, newTaskData) }
+          ? { ...task, childrenTasks: updateTaskInTaskList(task.childrenTasks, newTaskData) }
           : task;
     });
   }
@@ -58,7 +58,7 @@ export default function HomePage() {
     const response = await window.api.tasks.toggle({ id: newTaskData.id });
 
     if (response.success) {
-      setTasks(toggleTaskInTaskList(tasks(), newTaskData));
+      setTasks(updateTaskInTaskList(tasks(), newTaskData));
     }
     else window.alert(response.error.message);
   }
