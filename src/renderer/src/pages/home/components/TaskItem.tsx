@@ -34,6 +34,14 @@ export function TaskItem(props: TaskItemProps) {
     }
   }
 
+  function handleBlur() {
+    if (newSubtaskTitle().trim()) {
+      props.onAddSubtask(props.task.id, newSubtaskTitle());
+      setNewSubtaskTitle('');
+    }
+    props.onSetSubtaskFormTaskId(null);
+  }
+
   function handleToggleAddSubtask(e: MouseEvent) {
     e.stopPropagation();
     if (isAdding()) {
@@ -144,6 +152,8 @@ export function TaskItem(props: TaskItemProps) {
                 value={newSubtaskTitle}
                 onChange={setNewSubtaskTitle}
                 onSubmit={handleSubmitSubtask}
+                onBlur={handleBlur}
+                autoFocus={true}
                 noCard
               />
             </div>

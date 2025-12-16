@@ -8,14 +8,30 @@ interface Props {
   value: Accessor<string>
   onChange: (v: string) => void
   onSubmit: (e: Event) => void
+  onBlur?: () => void
+  autoFocus?: boolean
 }
 
 export function TaskForm(props: Props & { noCard?: boolean }) {
+  let formRef: HTMLFormElement | undefined
+
+  const handleFocusOut = (e: FocusEvent) => {
+    if (props.onBlur && formRef && !formRef.contains(e.relatedTarget as Node)) {
+      props.onBlur()
+    }
+  }
+
   const content = (
-    <form onSubmit={props.onSubmit} class="flex gap-3">
+    <form
+      ref={formRef}
+      onSubmit={props.onSubmit}
+      onFocusOut={handleFocusOut}
+      class="flex gap-3"
+    >
       <Input
+        autofocus={props.autoFocus}
         value={props.value()}
-        onInput={e => props.onChange(e.currentTarget.value)}
+        onInput={(e) => props.onChange(e.currentTarget.value)}
         placeholder="Adicionar nova tarefa..."
         class={`
           flex-1
@@ -26,9 +42,7 @@ export function TaskForm(props: Props & { noCard?: boolean }) {
           hover:border hover:border-purple-500
         `}
       />
-      <Button
-        type="submit"
-        class="h-12 px-6 cursor-pointer hover:bg-purple-500">
+      <Button type="submit" class="h-12 px-6 cursor-pointer hover:bg-purple-500">
         <Plus class="w-5 h-5 mr-2" />
         Adicionar
       </Button>
