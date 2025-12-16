@@ -12,7 +12,7 @@ export function TaskStats(props: Props) {
       : 0
 
   return (
-    <Card class="mb-6 p-6 bg-slate-800/50 backdrop-blur-sm shadow-lg border border-slate-700/50">
+    <Card class="mb-6 p-6 bg-slate-800/50 backdrop-blur-sm shadow-lg border border-slate-700/50 rounded-[5px]">
       <div class="flex justify-between items-center">
         <div>
           <p class="text-sm text-gray-400 mb-1">Progresso</p>

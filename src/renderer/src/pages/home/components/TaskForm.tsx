@@ -12,7 +12,7 @@ interface Props {
 
 export function TaskForm(props: Props) {
   return (
-    <Card class="mb-6 p-6 bg-slate-800/50 backdrop-blur-sm shadow-lg border border-slate-700/50">
+    <Card class="mb-6 p-6 bg-slate-800/50 backdrop-blur-sm shadow-lg border border-slate-700/50 rounded-[5px]">
       <form onSubmit={props.onSubmit} class="flex gap-3">
         <Input
           value={props.value()}

@@ -17,7 +17,7 @@ interface Props {
 
 export function TaskList(props: Props) {
   return (
-    <Card class="bg-slate-800/50 backdrop-blur-sm shadow-lg border border-slate-700/50">
+    <Card class="bg-slate-800/50 backdrop-blur-sm shadow-lg border border-slate-700/50 rounded-[5px]">
       <For
         each={props.tasks}
         fallback={
