@@ -37,7 +37,7 @@ function createWindow(): void {
   }
 }
 
-app.whenReady().then(() => {
+app.whenReady().then(async () => {
   electronApp.setAppUserModelId('com.guilhermepk.tasker')
   app.on('browser-window-created', (_, window) => {
     optimizer.watchWindowShortcuts(window)
@@ -45,7 +45,7 @@ app.whenReady().then(() => {
 
   ipcMain.on('ping', () => console.log('pong'))
 
-  bootstrapNestJS();
+  await bootstrapNestJS();
   createWindow();
 
   app.on('activate', function () {

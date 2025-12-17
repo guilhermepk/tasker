@@ -1,12 +1,12 @@
-import { Router, Route } from '@solidjs/router'
+import { HashRouter, Route } from '@solidjs/router'
 import { Component } from 'solid-js'
 import HomePage from './pages/home/HomePage';
 
 const App: Component = () => {
   return (
-    <Router>
+    <HashRouter>
       <Route path="/" component={HomePage} />
-    </Router>
+    </HashRouter>
   )
 }
 
