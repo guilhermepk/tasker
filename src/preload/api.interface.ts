@@ -1,9 +1,9 @@
-import { CreateTaskDto } from "@main/tasks/models/dtos/create-task.dto"
-import { DeleteTaskDto } from "@main/tasks/models/dtos/delete-task.dto"
-import { UpdateTaskDto } from "@main/tasks/models/dtos/update-task.dto"
-import { IpcResponse } from "@shared/models/interfaces/ipc-response.interface"
-import { FindAllTasksResponse } from "@shared/models/responses/tasks/find-all-tasks.response"
-import { CreateTaskResponse } from "@shared/models/responses/tasks/create-task.response"
+import { CreateTaskDto } from "src/main/tasks/models/dtos/create-task.dto"
+import { DeleteTaskDto } from "src/main/tasks/models/dtos/delete-task.dto"
+import { UpdateTaskDto } from "src/main/tasks/models/dtos/update-task.dto"
+import { IpcResponse } from "src/shared/models/interfaces/ipc-response.interface"
+import { FindAllTasksResponse } from "src/shared/models/responses/tasks/find-all-tasks.response"
+import { CreateTaskResponse } from "src/shared/models/responses/tasks/create-task.response"
 
 export interface ContextBridgeApi {
     tasks: {

@@ -8,5 +8,5 @@ export class CreateTaskDto {
 
   @IsOptional()
   @IsID()
-  fatherTaskId?: number;
+  fatherTaskId?: number | null;
 }

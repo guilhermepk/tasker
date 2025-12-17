@@ -1,5 +1,5 @@
 import { InjectRepository } from "@nestjs/typeorm";
-import { IsNull, Repository } from "typeorm";
+import { Repository } from "typeorm";
 import { TaskEntity } from "./models/entities/task.entity";
 import { DeleteResult } from "typeorm/browser";
 import { UpdateResult } from "typeorm/browser";
