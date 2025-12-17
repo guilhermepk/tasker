@@ -14,6 +14,10 @@ export class TasksTypeOrmRepository {
     return await this.repository.save(task);
   }
 
+  async save(task: TaskEntity): Promise<TaskEntity> {
+    return await this.repository.save(task);
+  }
+
   async delete(task: TaskEntity): Promise<DeleteResult> {
     return await this.repository.delete({ id: task.id });
   }

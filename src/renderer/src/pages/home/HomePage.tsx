@@ -12,6 +12,7 @@ export default function HomePage() {
   const [loading, setLoading] = createSignal(false);
   const [newTaskTitle, setNewTaskTitle] = createSignal('');
   const [subtaskFormTaskId, setSubtaskFormTaskId] = createSignal<number | null>(null);
+  const [draggedTaskId, setDraggedTaskId] = createSignal<number | null>(null);
 
   async function fetchTasks(): Promise<void> {
     setLoading(true);
@@ -171,8 +172,51 @@ export default function HomePage() {
     }
   }
 
+  async function handleMoveTask(targetId: number | null) {
+    const draggedId = draggedTaskId();
+    if (!draggedId) return;
+    if (draggedId === targetId) return;
+
+    if (targetId !== null) {
+      const draggedTask = findTask(tasks(), draggedId);
+      if (draggedTask) {
+        const containsTarget = (list: TaskData[]): boolean => {
+          for (const t of list) {
+            if (t.id === targetId) return true;
+            if (t.childrenTasks && containsTarget(t.childrenTasks)) return true;
+          }
+          return false;
+        };
+
+        if (containsTarget(draggedTask.childrenTasks)) {
+          return;
+        }
+      }
+    }
+
+    const response = await window.api.tasks.update({
+      id: draggedId,
+      fatherTaskId: targetId
+    });
+
+    if (response.success) {
+      await fetchTasks();
+    } else {
+      window.alert(formatIpcError(response.error));
+    }
+
+    setDraggedTaskId(null);
+  }
+
   return (
-    <div class="min-h-screen w-screen bg-linear-to-br from-slate-950 via-slate-900 to-indigo-950 py-12 px-4">
+    <div
+      class="min-h-screen w-screen bg-linear-to-br from-slate-950 via-slate-900 to-indigo-950 py-12 px-4"
+      onDragOver={(e) => e.preventDefault()}
+      onDrop={(e) => {
+        e.preventDefault();
+        handleMoveTask(null);
+      }}
+    >
       <div class="max-w-2xl mx-auto">
         <TaskStats
           completed={calculateCompletedCount()}
@@ -190,7 +234,8 @@ export default function HomePage() {
           onAddSubtask={handleAddSubtask}
           subtaskFormTaskId={subtaskFormTaskId()}
           onSetSubtaskFormTaskId={setSubtaskFormTaskId}
-
+          onDragStart={setDraggedTaskId}
+          onMoveTask={handleMoveTask}
         />
 
         <p class="text-center text-gray-500 text-sm mt-8">

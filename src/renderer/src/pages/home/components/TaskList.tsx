@@ -14,11 +14,24 @@ interface Props {
   onAddSubtask: (parentId: number, title: string) => void
   subtaskFormTaskId: number | null
   onSetSubtaskFormTaskId: (id: number | null) => void
+  onDragStart: (id: number) => void
+  onMoveTask: (targetId: number | null) => void
 }
 
 export function TaskList(props: Props) {
   return (
-    <Card class="bg-slate-800/50 backdrop-blur-sm shadow-lg border border-slate-700/50 rounded-[5px]">
+    <Card
+      class="bg-slate-800/50 backdrop-blur-sm shadow-lg border border-slate-700/50 rounded-[5px]"
+      onDragOver={(e) => {
+        e.preventDefault();
+      }}
+      onDrop={(e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        // If the event wasn't stopped by a TaskItem, it means we dropped on the background
+        props.onMoveTask(null);
+      }}
+    >
       <TaskForm
         value={props.newTaskTitle}
         onChange={props.onNewTaskTitleChange}
@@ -42,6 +55,8 @@ export function TaskList(props: Props) {
             onAddSubtask={props.onAddSubtask}
             subtaskFormTaskId={props.subtaskFormTaskId}
             onSetSubtaskFormTaskId={props.onSetSubtaskFormTaskId}
+            onDragStart={props.onDragStart}
+            onMoveTask={props.onMoveTask}
           />
         )}
       </For>

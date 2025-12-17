@@ -17,9 +17,20 @@ export class UpdateTaskUseCase {
   async execute(data: UpdateTaskDto): Promise<void> {
     return await tryCatch(async () => {
       const task: TaskEntity = await this.findTaskByIdUseCase.execute(data.id);
-      Object.assign(task, data);
+      
+      const { fatherTaskId, ...updateData } = data;
 
-      await this.repository.update(task);
+      Object.assign(task, updateData);
+
+      if (fatherTaskId !== undefined) {
+        if (fatherTaskId === null) {
+          task.fatherTask = null as any;
+        } else {
+          task.fatherTask = await this.findTaskByIdUseCase.execute(fatherTaskId);
+        }
+      }
+
+      await this.repository.save(task);
     }, `Erro ao atualizar tarefa`);
   }
 }

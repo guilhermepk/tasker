@@ -16,12 +16,15 @@ interface TaskItemProps {
   onAddSubtask: (parentId: number, title: string) => void
   subtaskFormTaskId: number | null
   onSetSubtaskFormTaskId: (id: number | null) => void
+  onDragStart: (id: number) => void
+  onMoveTask: (targetId: number | null) => void
 }
 
 export function TaskItem(props: TaskItemProps) {
   const [newSubtaskTitle, setNewSubtaskTitle] = createSignal('');
   const [isEditing, setIsEditing] = createSignal(false);
   const [editTitle, setEditTitle] = createSignal('');
+  const [isDragOver, setIsDragOver] = createSignal(false);
 
   const isAdding = () => props.subtaskFormTaskId === props.task.id;
   const hasSubtasks = () => props.task.childrenTasks && props.task.childrenTasks.length > 0
@@ -74,7 +77,29 @@ export function TaskItem(props: TaskItemProps) {
   return (
     <div class="w-full">
       <div
-        class="group p-4 flex items-center justify-between hover:bg-slate-700/30 cursor-pointer"
+        draggable="true"
+        onDragStart={(e) => {
+          e.stopPropagation();
+          e.dataTransfer?.setData('text/plain', String(props.task.id));
+          props.onDragStart(props.task.id);
+        }}
+        onDragOver={(e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          setIsDragOver(true);
+        }}
+        onDragLeave={(e) => {
+          e.preventDefault();
+          setIsDragOver(false);
+        }}
+        onDrop={(e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          setIsDragOver(false);
+          props.onMoveTask(props.task.id);
+        }}
+        class={`group p-4 flex items-center justify-between cursor-pointer transition-colors duration-200 ${isDragOver() ? 'bg-indigo-900/50 border-2 border-indigo-500 rounded-lg' : 'hover:bg-slate-700/30'
+          }`}
         title={props.task.completed ? 'Tornar pendente' : 'Concluir'}
         onClick={(e) => {
           e.stopPropagation();
@@ -198,6 +223,8 @@ export function TaskItem(props: TaskItemProps) {
                 onAddSubtask={props.onAddSubtask}
                 subtaskFormTaskId={props.subtaskFormTaskId}
                 onSetSubtaskFormTaskId={props.onSetSubtaskFormTaskId}
+                onDragStart={props.onDragStart}
+                onMoveTask={props.onMoveTask}
               />
             )}
           </For>
