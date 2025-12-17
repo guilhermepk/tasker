@@ -3,8 +3,8 @@
   "version": "1.0.0",
   "description": "Um aplicativo para gerenciar tarefas",
   "main": "./out/main/index.js",
-  "author": "example.com",
-  "homepage": "https://electron-vite.org",
+  "author": "Guilherme Prigol Kramer",
+  "homepage": "",
   "scripts": {
     "format": "prettier --write .",
     "lint": "eslint --cache .",
