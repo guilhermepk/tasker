@@ -1,7 +1,7 @@
 {
   "name": "tasker",
   "version": "1.0.0",
-  "description": "An Electron application with Solid and TypeScript",
+  "description": "Um aplicativo para gerenciar tarefas",
   "main": "./out/main/index.js",
   "author": "example.com",
   "homepage": "https://electron-vite.org",
@@ -55,5 +55,21 @@
     "typescript": "^5.9.3",
     "vite": "^7.2.6",
     "vite-plugin-solid": "^2.11.10"
+  },
+  "build": {
+    "appId": "com.guilhermepk.tasker",
+    "productName": "Tasker",
+    "icon": "build/icon",
+    "win": {
+      "icon": "build/icon.ico",
+      "target": "nsis"
+    },
+    "nsis": {},
+    "mac": {
+      "icon": "build/icon.icns"
+    },
+    "linux": {
+      "icon": "build/icon.png"
+    }
   }
 }

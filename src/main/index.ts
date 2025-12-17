@@ -3,9 +3,13 @@ import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
 import { bootstrapNestJS } from './bootstrap-nestjs'
+import * as path from 'path'
+
+app.setName('Tasker')
 
 function createWindow(): void {
   const mainWindow = new BrowserWindow({
+    icon: path.join(__dirname, '../../build/icon.png'),
     width: 900,
     height: 670,
     show: false,
