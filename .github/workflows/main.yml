@@ -31,7 +31,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           npm run build
-          npx electron-builder --config package.json --publish never
+          npx electron-builder --publish never
 
       - name: Release
         uses: softprops/action-gh-release@v2
