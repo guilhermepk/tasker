@@ -3,4 +3,5 @@ export class CreateTaskResponse {
   title: string;
   completed: boolean;
   childrenTasks: CreateTaskResponse[];
+  content: string;
 }

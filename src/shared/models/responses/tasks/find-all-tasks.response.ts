@@ -3,6 +3,7 @@ export class TaskInFindAllTasksResponse {
   title: string;
   completed: boolean;
   childrenTasks: TaskInFindAllTasksResponse[];
+  content: string;
 }
 
 export class FindAllTasksResponse {

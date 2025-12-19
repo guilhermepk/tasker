@@ -21,6 +21,9 @@ export class TaskEntity {
   @Column({ type: 'boolean', default: false, nullable: false })
   completed: boolean;
 
+  @Column({ type: 'text', nullable: true })
+  content?: string;
+
   // --{ RELAÇÕES }--
 
   @JoinColumn({ name: 'fk_father_task' })

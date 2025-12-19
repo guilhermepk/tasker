@@ -28,7 +28,6 @@ export function TaskList(props: Props) {
       onDrop={(e) => {
         e.preventDefault();
         e.stopPropagation();
-        // If the event wasn't stopped by a TaskItem, it means we dropped on the background
         props.onMoveTask(null);
       }}
     >

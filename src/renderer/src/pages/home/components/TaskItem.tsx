@@ -3,6 +3,7 @@ import { Button } from '../../../components/Button'
 import { TaskInFindAllTasksResponse } from '@shared/models/responses/tasks/find-all-tasks.response'
 import { For, createSignal } from 'solid-js'
 import { TaskForm } from './TaskForm'
+import { useNavigate } from '@solidjs/router'
 
 export type TaskData = TaskInFindAllTasksResponse & {
   expanded?: boolean,
@@ -21,6 +22,8 @@ interface TaskItemProps {
 }
 
 export function TaskItem(props: TaskItemProps) {
+  const navigate = useNavigate();
+
   const [newSubtaskTitle, setNewSubtaskTitle] = createSignal('');
   const [isEditing, setIsEditing] = createSignal(false);
   const [editTitle, setEditTitle] = createSignal('');
@@ -103,7 +106,8 @@ export function TaskItem(props: TaskItemProps) {
         title={props.task.completed ? 'Tornar pendente' : 'Concluir'}
         onClick={(e) => {
           e.stopPropagation();
-          props.onUpdate({ ...props.task, completed: !props.task.completed });
+
+          navigate(`/task/${props.task.id}`);
         }}
       >
         <div class="flex items-center gap-4 grow py-2 -my-2">
@@ -124,16 +128,22 @@ export function TaskItem(props: TaskItemProps) {
             </button>
           )}
 
-          <div class="relative">
+          <div
+            class="relative group/icon peer/icon cursor-pointer"
+            onClick={(e) => {
+              e.stopPropagation()
+              props.onUpdate({ ...props.task, completed: !props.task.completed })
+            }}
+          >
             {props.task.completed ? (
               <>
-                <CheckCircle2 class="w-6 h-6 text-green-400 group-hover:opacity-0 transition-opacity duration-200" />
-                <Circle class="w-6 h-6 text-gray-600 absolute top-0 left-0 opacity-0 group-hover:opacity-25 transition-opacity duration-200" />
+                <CheckCircle2 class="w-6 h-6 text-green-400 group-hover/icon:opacity-0 transition-opacity duration-200" />
+                <Circle class="w-6 h-6 text-gray-600 absolute top-0 left-0 opacity-0 group-hover/icon:opacity-25 transition-opacity duration-200" />
               </>
             ) : (
               <>
-                <Circle class="w-6 h-6 text-gray-600 group-hover:opacity-0 transition-opacity duration-200" />
-                <CheckCircle2 class="w-6 h-6 text-green-400 absolute top-0 left-0 opacity-0 group-hover:opacity-25 transition-opacity duration-200" />
+                <Circle class="w-6 h-6 text-gray-600 group-hover/icon:opacity-0 transition-opacity duration-200" />
+                <CheckCircle2 class="w-6 h-6 text-green-400 absolute top-0 left-0 opacity-0 group-hover/icon:opacity-25 transition-opacity duration-200" />
               </>
             )}
           </div>
@@ -153,10 +163,14 @@ export function TaskItem(props: TaskItemProps) {
             />
           ) : (
             <span
+              onClick={(e) => {
+                e.stopPropagation();
+                props.onUpdate({ ...props.task, completed: !props.task.completed });
+              }}
               class={
                 props.task.completed
-                  ? 'line-through text-gray-500 group-hover:no-underline group-hover:text-gray-400 transition-all duration-200'
-                  : 'text-gray-200 group-hover:line-through group-hover:text-gray-400 transition-all duration-200'
+                  ? 'line-through text-gray-500 peer-hover/icon:no-underline peer-hover/icon:text-gray-400 transition-all duration-200'
+                  : 'text-gray-200 peer-hover/icon:line-through peer-hover/icon:text-gray-400 transition-all duration-200'
               }
             >
               {props.task.title}
