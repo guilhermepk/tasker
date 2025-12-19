@@ -6,6 +6,7 @@ import { IpcResponse } from '@shared/models/interfaces/ipc-response.interface'
 import { TaskData } from './components/TaskItem'
 import { CreateTaskResponse } from '@shared/models/responses/tasks/create-task.response'
 import formatIpcError from '@renderer/utils/format-ipc-error'
+import { TextEditor } from '@renderer/components/TextEditor'
 
 export default function HomePage() {
   const [tasks, setTasks] = createSignal<TaskData[]>([]);
@@ -208,6 +209,10 @@ export default function HomePage() {
     setDraggedTaskId(null);
   }
 
+  const handleChange = (content: object) => {
+    console.log(content)
+  }
+
   return (
     <div
       class="min-h-screen w-screen bg-linear-to-br from-slate-950 via-slate-900 to-indigo-950 py-12 px-4"
@@ -244,6 +249,8 @@ export default function HomePage() {
             ? '🎉 Parabéns! Todas as tarefas concluídas!'
             : `${tasks().length - calculateCompletedCount()} tarefa(s) pendente(s)`}
         </p>
+
+        <TextEditor onChange={handleChange} />
       </div>
     </div>
   );
