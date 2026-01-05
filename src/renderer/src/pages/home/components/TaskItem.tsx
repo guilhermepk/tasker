@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react'
 import { Trash2, CheckCircle2, Circle, ChevronRight, ChevronDown, Plus, Pencil } from 'lucide-react'
+import { useNavigate } from 'react-router-dom'
 import { Button } from '../../../components/Button'
 import { TaskInFindAllTasksResponse } from '@shared/models/responses/tasks/find-all-tasks.response'
 import { TaskForm } from './TaskForm'
@@ -21,6 +22,7 @@ interface TaskItemProps {
 }
 
 export function TaskItem(props: TaskItemProps) {
+  const navigate = useNavigate();
   const [newSubtaskTitle, setNewSubtaskTitle] = useState('');
   const [isEditing, setIsEditing] = useState(false);
   const [editTitle, setEditTitle] = useState('');
@@ -108,10 +110,9 @@ export function TaskItem(props: TaskItemProps) {
         }}
         className={`group p-4 flex items-center justify-between cursor-pointer transition-colors duration-200 ${isDragOver ? 'bg-indigo-900/50 border-2 border-indigo-500 rounded-lg' : 'hover:bg-slate-700/30'
           }`}
-        title={props.task.completed ? 'Tornar pendente' : 'Concluir'}
         onClick={(e) => {
           e.stopPropagation();
-          props.onUpdate({ ...props.task, completed: !props.task.completed });
+          navigate(`/task/${props.task.id}`);
         }}
       >
         <div className="flex items-center gap-4 grow py-2 -my-2">
@@ -132,7 +133,14 @@ export function TaskItem(props: TaskItemProps) {
             </button>
           )}
 
-          <div className="relative">
+          <div
+            className="relative cursor-pointer"
+            onClick={(e) => {
+              e.stopPropagation();
+              props.onUpdate({ ...props.task, completed: !props.task.completed });
+            }}
+            title={props.task.completed ? 'Tornar pendente' : 'Concluir'}
+          >
             {props.task.completed ? (
               <>
                 <CheckCircle2 className="w-6 h-6 text-green-400 group-hover:opacity-0 transition-opacity duration-200" />
