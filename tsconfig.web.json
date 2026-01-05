@@ -4,26 +4,15 @@
     "src/renderer/src/env.d.ts",
     "src/renderer/src/**/*",
     "src/renderer/src/**/*.tsx",
-    "src/preload/*.d.ts",
-    "src/shared/**/*"
-  ],
-  "exclude": [
-    "src/main/**/*"
+    "src/preload/*.d.ts"
   ],
   "compilerOptions": {
-    "jsx": "react-jsx",
-    "experimentalDecorators": true,
-    "emitDecoratorMetadata": true,
-    "strictPropertyInitialization": false,
     "composite": true,
-    "jsxImportSource": "solid-js",
+    "jsx": "react-jsx",
     "baseUrl": ".",
     "paths": {
       "@renderer/*": [
         "src/renderer/src/*"
-      ],
-      "@shared/*": [
-        "src/shared/*"
       ]
     }
   }

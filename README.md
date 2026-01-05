@@ -1,6 +1,6 @@
 # tasker
 
-An Electron application with Solid and TypeScript
+An Electron application with React and TypeScript
 
 ## Recommended IDE Setup
 

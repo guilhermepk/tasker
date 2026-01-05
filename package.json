@@ -1,10 +1,10 @@
 {
   "name": "tasker",
   "version": "1.0.0",
-  "description": "Um aplicativo para gerenciar tarefas",
+  "description": "An Electron application with React and TypeScript",
   "main": "./out/main/index.js",
-  "author": "Guilherme Prigol Kramer",
-  "homepage": "",
+  "author": "example.com",
+  "homepage": "https://electron-vite.org",
   "scripts": {
     "format": "prettier --write .",
     "lint": "eslint --cache .",
@@ -23,57 +23,27 @@
   "dependencies": {
     "@electron-toolkit/preload": "^3.0.2",
     "@electron-toolkit/utils": "^4.0.0",
-    "@nestjs/common": "^11.1.9",
-    "@nestjs/core": "^11.1.9",
-    "@nestjs/mapped-types": "^2.1.0",
-    "@nestjs/typeorm": "^11.0.0",
-    "@solidjs/router": "^0.15.4",
-    "@tailwindcss/vite": "^4.1.18",
-    "@tiptap/core": "^3.14.0",
-    "@tiptap/extension-placeholder": "^3.14.0",
-    "@tiptap/starter-kit": "^3.14.0",
-    "class-transformer": "^0.5.1",
-    "class-validator": "^0.14.3",
-    "class-variance-authority": "^0.7.1",
-    "clsx": "^2.1.1",
-    "electron-updater": "^6.3.9",
-    "lucide-solid": "^0.469.0",
-    "rxjs": "^7.8.2",
-    "sqlite3": "^5.1.7",
-    "tailwind-merge": "^3.4.0",
-    "tailwindcss": "^4.1.18",
-    "typeorm": "^0.3.28"
+    "electron-updater": "^6.3.9"
   },
   "devDependencies": {
     "@electron-toolkit/eslint-config-prettier": "^3.0.0",
     "@electron-toolkit/eslint-config-ts": "^3.1.0",
     "@electron-toolkit/tsconfig": "^2.0.0",
     "@types/node": "^22.19.1",
+    "@types/react": "^19.2.7",
+    "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^5.1.1",
     "electron": "^39.2.6",
     "electron-builder": "^26.0.12",
     "electron-vite": "^5.0.0",
     "eslint": "^9.39.1",
-    "eslint-plugin-solid": "^0.14.5",
+    "eslint-plugin-react": "^7.37.5",
+    "eslint-plugin-react-hooks": "^7.0.1",
+    "eslint-plugin-react-refresh": "^0.4.24",
     "prettier": "^3.7.4",
-    "solid-js": "^1.9.10",
+    "react": "^19.2.1",
+    "react-dom": "^19.2.1",
     "typescript": "^5.9.3",
-    "vite": "^7.2.6",
-    "vite-plugin-solid": "^2.11.10"
-  },
-  "build": {
-    "appId": "com.guilhermepk.tasker",
-    "productName": "Tasker",
-    "icon": "build/icon",
-    "win": {
-      "icon": "build/icon.ico",
-      "target": "nsis"
-    },
-    "nsis": {},
-    "mac": {
-      "icon": "build/icon.icns"
-    },
-    "linux": {
-      "icon": "build/icon.png"
-    }
+    "vite": "^7.2.6"
   }
 }
