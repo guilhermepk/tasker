@@ -12,13 +12,14 @@ export type TaskData = TaskInFindAllTasksResponse & {
 
 interface TaskItemProps {
   task: TaskData
-  onUpdate: (newTaskData: TaskData) => void
-  onDelete: (id: number) => void
-  onAddSubtask: (parentId: number, title: string) => void
+  onUpdate?: (newTaskData: TaskData) => void
+  onDelete?: (id: number) => void
+  onAddSubtask?: (parentId: number, title: string) => void
   subtaskFormTaskId: number | null
-  onSetSubtaskFormTaskId: (id: number | null) => void
-  onDragStart: (id: number) => void
-  onMoveTask: (targetId: number | null) => void
+  onSetSubtaskFormTaskId?: (id: number | null) => void
+  onDragStart?: (id: number) => void
+  onMoveTask?: (targetId: number | null) => void
+  className?: string
 }
 
 export function TaskItem(props: TaskItemProps) {
@@ -43,27 +44,27 @@ export function TaskItem(props: TaskItemProps) {
   function handleSubmitSubtask(e: React.FormEvent) {
     e.preventDefault();
     if (newSubtaskTitle.trim()) {
-      props.onAddSubtask(props.task.id, newSubtaskTitle);
+      props.onAddSubtask?.(props.task.id, newSubtaskTitle);
       setNewSubtaskTitle('');
-      props.onSetSubtaskFormTaskId(null); // Close the form
+      props.onSetSubtaskFormTaskId?.(null); // Close the form
     }
   }
 
   function handleBlur() {
     if (newSubtaskTitle.trim()) {
-      props.onAddSubtask(props.task.id, newSubtaskTitle);
+      props.onAddSubtask?.(props.task.id, newSubtaskTitle);
       setNewSubtaskTitle('');
     }
-    props.onSetSubtaskFormTaskId(null);
+    props.onSetSubtaskFormTaskId?.(null);
   }
 
   function handleToggleAddSubtask(e: React.MouseEvent) {
     e.stopPropagation();
     if (isAdding) {
-      props.onSetSubtaskFormTaskId(null);
+      props.onSetSubtaskFormTaskId?.(null);
     } else {
-      props.onSetSubtaskFormTaskId(props.task.id);
-      props.onUpdate({ ...props.task, expanded: true }); // Ensure expanded
+      props.onSetSubtaskFormTaskId?.(props.task.id);
+      props.onUpdate?.({ ...props.task, expanded: true }); // Ensure expanded
     }
   }
 
@@ -75,7 +76,7 @@ export function TaskItem(props: TaskItemProps) {
 
   function handleSaveEdit() {
     if (editTitle.trim() && editTitle !== props.task.title) {
-      props.onUpdate({ ...props.task, title: editTitle });
+      props.onUpdate?.({ ...props.task, title: editTitle });
     }
     setIsEditing(false);
   }
@@ -85,13 +86,13 @@ export function TaskItem(props: TaskItemProps) {
   }
 
   return (
-    <div className="w-full">
+    <div className={`w-full ${props.className}`}>
       <div
-        draggable="true"
+        draggable={props.onDragStart ? 'true' : 'false'}
         onDragStart={(e) => {
           e.stopPropagation();
           e.dataTransfer?.setData('text/plain', String(props.task.id));
-          props.onDragStart(props.task.id);
+          props.onDragStart?.(props.task.id);
         }}
         onDragOver={(e) => {
           e.preventDefault();
@@ -106,9 +107,9 @@ export function TaskItem(props: TaskItemProps) {
           e.preventDefault();
           e.stopPropagation();
           setIsDragOver(false);
-          props.onMoveTask(props.task.id);
+          props.onMoveTask?.(props.task.id);
         }}
-        className={`group p-4 flex items-center justify-between cursor-pointer transition-colors duration-200 ${isDragOver ? 'bg-indigo-900/50 border-2 border-indigo-500 rounded-lg' : 'hover:bg-slate-700/30'
+        className={`p-4 flex items-center justify-between cursor-pointer transition-colors duration-200 ${isDragOver ? 'bg-indigo-900/50 border-2 border-indigo-500 rounded-lg' : 'hover:bg-slate-700/30'
           }`}
         onClick={(e) => {
           e.stopPropagation();
@@ -120,7 +121,7 @@ export function TaskItem(props: TaskItemProps) {
             <button
               onClick={(e) => {
                 e.stopPropagation();
-                props.onUpdate({ ...props.task, expanded: !props.task.expanded });
+                props.onUpdate?.({ ...props.task, expanded: !props.task.expanded });
               }}
               className="p-1 -ml-2 rounded hover:bg-slate-600 transition-colors duration-200"
               title={props.task.expanded ? 'Colapsar sub-tarefas' : 'Expandir sub-tarefas'}
@@ -133,23 +134,29 @@ export function TaskItem(props: TaskItemProps) {
             </button>
           )}
 
+
           <div
             className="relative cursor-pointer"
             onClick={(e) => {
               e.stopPropagation();
-              props.onUpdate({ ...props.task, completed: !props.task.completed });
+              props.onUpdate?.({ ...props.task, completed: !props.task.completed });
             }}
             title={props.task.completed ? 'Tornar pendente' : 'Concluir'}
           >
             {props.task.completed ? (
               <>
-                <CheckCircle2 className="w-6 h-6 text-green-400 group-hover:opacity-0 transition-opacity duration-200" />
-                <Circle className="w-6 h-6 text-gray-600 absolute top-0 left-0 opacity-0 group-hover:opacity-25 transition-opacity duration-200" />
+                <CheckCircle2
+                  className={`
+                    w-6 h-6 text-green-400 transition-opacity duration-200
+                    ${props.onUpdate ? 'hover:opacity-0' : 'hover:opacity-100'}
+                  `}
+                />
+                <Circle className="w-6 h-6 text-gray-600 absolute top-0 left-0 opacity-0 hover:opacity-25 transition-opacity duration-200" />
               </>
             ) : (
               <>
-                <Circle className="w-6 h-6 text-gray-600 group-hover:opacity-0 transition-opacity duration-200" />
-                <CheckCircle2 className="w-6 h-6 text-green-400 absolute top-0 left-0 opacity-0 group-hover:opacity-25 transition-opacity duration-200" />
+                <Circle className="w-6 h-6 text-gray-600 hover:opacity-0 transition-opacity duration-200" />
+                <CheckCircle2 className="w-6 h-6 text-green-400 absolute top-0 left-0 opacity-0 hover:opacity-25 transition-opacity duration-200" />
               </>
             )}
           </div>
@@ -171,8 +178,8 @@ export function TaskItem(props: TaskItemProps) {
             <span
               className={
                 props.task.completed
-                  ? 'line-through text-gray-500 group-hover:no-underline group-hover:text-gray-400 transition-all duration-200'
-                  : 'text-gray-200 group-hover:line-through group-hover:text-gray-400 transition-all duration-200'
+                  ? `line-through text-gray-500 transition-all duration-200`
+                  : `text-gray-200 transition-all duration-200`
               }
             >
               {props.task.title}
@@ -181,38 +188,44 @@ export function TaskItem(props: TaskItemProps) {
         </div>
 
         <div className="flex gap-2">
-          <Button
-            className='cursor-pointer hover:text-purple-400'
-            variant="ghost"
-            size="icon"
-            onClick={handleToggleAddSubtask}
-            title='Adicionar sub-tarefa'
-          >
-            <Plus className="w-5 h-5" />
-          </Button>
+          {props.onAddSubtask && (
+            <Button
+              className='cursor-pointer hover:text-purple-400'
+              variant="ghost"
+              size="icon"
+              onClick={handleToggleAddSubtask}
+              title='Adicionar sub-tarefa'
+            >
+              <Plus className="w-5 h-5" />
+            </Button>
+          )}
 
-          <Button
-            className='cursor-pointer hover:text-blue-400'
-            variant="ghost"
-            size="icon"
-            onClick={handleStartEdit}
-            title='Editar tarefa'
-          >
-            <Pencil className="w-5 h-5" />
-          </Button>
+          {props.onUpdate && (
+            <Button
+              className='cursor-pointer hover:text-blue-400'
+              variant="ghost"
+              size="icon"
+              onClick={handleStartEdit}
+              title='Editar tarefa'
+            >
+              <Pencil className="w-5 h-5" />
+            </Button>
+          )}
 
-          <Button
-            className='cursor-pointer hover:text-[red]'
-            variant="ghost"
-            size="icon"
-            onClick={(e) => {
-              e.stopPropagation()
-              props.onDelete(props.task.id)
-            }}
-            title='Excluir tarefa'
-          >
-            <Trash2 className="w-5 h-5" />
-          </Button>
+          {props.onDelete && (
+            <Button
+              className='cursor-pointer hover:text-[red]'
+              variant="ghost"
+              size="icon"
+              onClick={(e) => {
+                e.stopPropagation()
+                props.onDelete!(props.task.id)
+              }}
+              title='Excluir tarefa'
+            >
+              <Trash2 className="w-5 h-5" />
+            </Button>
+          )}
         </div>
       </div>
 

@@ -23,7 +23,13 @@ export class TasksTypeOrmRepository {
   }
 
   async findById(id: number): Promise<TaskEntity | null> {
-    return await this.repository.findOneBy({ id });
+    return await this.repository.findOne({
+      where: { id },
+      relations: {
+        fatherTask: true,
+        childrenTasks: true,
+      },
+    });
   }
 
   async findAll(): Promise<TaskEntity[]> {

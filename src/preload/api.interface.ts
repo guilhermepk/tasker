@@ -4,12 +4,16 @@ import { UpdateTaskDto } from "src/main/tasks/models/dtos/update-task.dto"
 import { IpcResponse } from "src/shared/models/interfaces/ipc-response.interface"
 import { FindAllTasksResponse } from "src/shared/models/responses/tasks/find-all-tasks.response"
 import { CreateTaskResponse } from "src/shared/models/responses/tasks/create-task.response"
+import { FindTaskByIdDto } from "@main/tasks/models/dtos/find-task-by-id.dto"
+import { FindTaskByIdResponse } from "@shared/models/responses/tasks/find-task-by-id.response"
 
 export interface ContextBridgeApi {
     tasks: {
-      findAll: () => Promise<IpcResponse<FindAllTasksResponse>>
       create: (payload: CreateTaskDto) => Promise<IpcResponse<CreateTaskResponse>>
+      findAll: () => Promise<IpcResponse<FindAllTasksResponse>>
+      findById: (payload: FindTaskByIdDto) => Promise<IpcResponse<FindTaskByIdResponse>>
       update: (payload: UpdateTaskDto) => Promise<IpcResponse<{ message: string }>>
       delete: (payload: DeleteTaskDto) => Promise<IpcResponse<{ message: string }>>
+
     }
   }

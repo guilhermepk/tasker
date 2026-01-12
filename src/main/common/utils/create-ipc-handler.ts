@@ -3,7 +3,7 @@ import { validateOrReject, ValidationError } from "class-validator";
 import { ipcMain, IpcMainInvokeEvent } from "electron";
 import { IpcResponse } from "../../../shared/models/interfaces/ipc-response.interface";
 import { IpcError } from "../../../shared/models/errors/ipc.error";
-import { INestApplicationContext } from "@nestjs/common";
+import { INestApplicationContext, Logger } from "@nestjs/common";
 import { handleError } from './try-catch';
 import { getAppContext } from "../../nest-context";
 import { IpcGuard } from "../../guards/models/types/ipc-guard";
@@ -122,4 +122,6 @@ export default function createIpcHandler<Dto, Response, UseCase>(
   }
 
   ipcMain.handle(channel, finalHandler);
+  const logger = new Logger('createIpcHandler');
+  logger.log(`Handler criado para o canal ${channel}`);
 }

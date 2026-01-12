@@ -1,13 +1,12 @@
 import { HashRouter, Routes, Route } from 'react-router-dom';
-import HomePage from './pages/home/HomePage';
-import TaskPage from './pages/task/TaskPage';
+import { routes } from './common/routes';
 
 export default function App() {
   return (
     <HashRouter>
       <Routes>
-        <Route path="/" element={<HomePage />} />
-        <Route path="/task/:id" element={<TaskPage />} />
+        <Route path={routes.homePage.path} element={<routes.homePage.element />} />
+        <Route path={routes.taskPage.path(':id')} element={<routes.taskPage.element />} />
       </Routes>
     </HashRouter>
   )
