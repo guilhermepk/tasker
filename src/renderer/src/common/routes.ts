@@ -7,7 +7,7 @@ export const routes = {
     element: HomePage
   },
   taskPage: {
-    path: (taskId: string) => `/task/${taskId}`,
+    path: (taskId: string | number) => `/task/${taskId}`,
     element: TaskPage
   }
 }

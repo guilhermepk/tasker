@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom'
 import { Button } from '../../../components/Button'
 import { TaskInFindAllTasksResponse } from '@shared/models/responses/tasks/find-all-tasks.response'
 import { TaskForm } from './TaskForm'
+import { routes } from '@renderer/common/routes'
 
 export type TaskData = TaskInFindAllTasksResponse & {
   expanded?: boolean,
@@ -113,7 +114,7 @@ export function TaskItem(props: TaskItemProps) {
           }`}
         onClick={(e) => {
           e.stopPropagation();
-          navigate(`/task/${props.task.id}`);
+          navigate(routes.taskPage.path(props.task.id));
         }}
       >
         <div className="flex items-center gap-4 grow py-2 -my-2">
