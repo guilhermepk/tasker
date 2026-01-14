@@ -1,7 +1,7 @@
 import React from 'react'
-import { Card } from '../../../components/Card'
 import { TaskItem, TaskData } from './TaskItem'
 import { TaskForm } from './TaskForm'
+import Card from '@renderer/components/Card'
 
 interface Props {
   tasks: TaskData[]

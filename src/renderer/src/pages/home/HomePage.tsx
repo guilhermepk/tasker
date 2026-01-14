@@ -22,7 +22,7 @@ export default function HomePage() {
     if (response.success) {
       // Note: We need to access the current state of tasks here.
       // However, since fetchTasks is async and we want to preserve expanded state based on potentially stale state if we just use 'tasks' from closure?
-      // Actually, standard React way is fine for now, or use functional update if strictly needed.
+      // Actually, standard React way is fine for now, or usze functional update if strictly needed.
       // But we need the 'current' tasks to getExpandedTaskIds.
       // Since 'tasks' is in closure, it refers to render-time tasks.
       // Refetching shouldn't drastically change expanded nature unless IDs change.
