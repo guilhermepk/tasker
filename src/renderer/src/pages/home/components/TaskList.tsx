@@ -2,6 +2,7 @@ import React from 'react'
 import { TaskItem, TaskData } from './TaskItem'
 import { TaskForm } from './TaskForm'
 import Card from '@renderer/components/Card'
+import { Input } from '@renderer/components/Input'
 
 interface Props {
   tasks: TaskData[]
@@ -21,7 +22,6 @@ interface Props {
 export function TaskList(props: Props) {
   return (
     <Card
-      className="bg-slate-800/50 backdrop-blur-sm shadow-lg border border-slate-700/50 rounded-[5px]"
       onDragOver={(e: React.DragEvent) => {
         e.preventDefault();
       }}
@@ -36,7 +36,6 @@ export function TaskList(props: Props) {
         value={props.newTaskTitle}
         onChange={props.onNewTaskTitleChange}
         onSubmit={props.onTaskCreate}
-        noCard
       />
 
       {props.tasks.length === 0 ? (
@@ -64,7 +63,6 @@ export function TaskList(props: Props) {
           value={props.newTaskTitle}
           onChange={props.onNewTaskTitleChange}
           onSubmit={props.onTaskCreate}
-          noCard
         />
       )}
     </Card>
