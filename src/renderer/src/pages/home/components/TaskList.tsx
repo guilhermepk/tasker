@@ -2,7 +2,6 @@ import React from 'react'
 import { TaskItem, TaskData } from './TaskItem'
 import { TaskForm } from './TaskForm'
 import Card from '@renderer/components/Card'
-import { Input } from '@renderer/components/Input'
 
 interface Props {
   tasks: TaskData[]

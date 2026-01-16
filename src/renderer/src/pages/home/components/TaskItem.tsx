@@ -240,7 +240,6 @@ export function TaskItem(props: TaskItemProps) {
                 onSubmit={handleSubmitSubtask}
                 onBlur={handleBlur}
                 autoFocus={true}
-                noCard
               />
             </div>
           )}
