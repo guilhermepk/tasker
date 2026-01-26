@@ -1,6 +1,7 @@
 import { TaskStats } from './components/TaskStats'
 import { TaskList } from './components/TaskList'
-import { useHome } from '@renderer/contexts/HomeContext'
+import { TaskData, useHome } from '@renderer/contexts/HomeContext'
+import { TaskItem } from './components/TaskItem';
 
 export default function HomePage() {
   const {
@@ -8,6 +9,14 @@ export default function HomePage() {
     handleMoveTask,
     calculateCompletedCount
   } = useHome();
+
+  const fakeTask: TaskData = {
+    id: 1,
+    completed: false,
+    title: 'Falsa',
+    childrenTasks: [],
+    expanded: false
+  }
 
   return (
     <div
@@ -18,6 +27,13 @@ export default function HomePage() {
         handleMoveTask(null);
       }}
     >
+      <TaskItem
+        task={fakeTask}
+        onUpdate={(newData) => window.alert('Novas informações: ' + JSON.stringify(newData))}
+        onDelete={(id) => window.alert('Deletar tarefa: ' + id)}
+        canAddSubtask
+      />
+
       <div className="max-w-2xl mx-auto">
         <TaskStats />
 

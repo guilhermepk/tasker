@@ -12,6 +12,8 @@ export function TaskList(_props: Props) {
     tasks,
     handleMoveTask,
     handleCreateTask,
+    handleUpdate,
+    handleDelete,
     newTaskTitle, setNewTaskTitle
   } = useHome();
 
@@ -42,8 +44,8 @@ export function TaskList(_props: Props) {
           <TaskItem
             key={task.id}
             task={task}
-            updatable
-            deletable
+            onUpdate={handleUpdate}
+            onDelete={handleDelete}
             canAddSubtask
             draggable
           />

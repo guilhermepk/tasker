@@ -7,20 +7,20 @@ import { routes } from '@renderer/common/routes'
 import { TaskData, useHome } from '@renderer/contexts/HomeContext'
 
 interface TaskItemProps {
-  updatable?: boolean,
-  deletable?: boolean,
+  onUpdate?: (newTaskData: TaskData) => void
+  onDelete: (id: number) => void,
   canAddSubtask?: boolean,
   task: TaskData
   className?: string,
   draggable?: boolean
 }
 
-export function TaskItem(props: TaskItemProps) {
+export function TaskItem({
+  onUpdate, task, canAddSubtask, className, draggable, onDelete
+}: TaskItemProps) {
   const navigate = useNavigate();
 
   const {
-    handleUpdate,
-    handleDelete,
     handleAddSubtask,
     subtaskFormTaskId, setSubtaskFormTaskId,
     handleMoveTask,
@@ -33,9 +33,9 @@ export function TaskItem(props: TaskItemProps) {
   const [isDragOver, setIsDragOver] = useState(false);
   const editInputRef = useRef<HTMLInputElement>(null);
 
-  const isAdding = subtaskFormTaskId === props.task.id;
-  const hasSubtasks = props.task.childrenTasks && props.task.childrenTasks.length > 0;
-  const showSubtasks = (props.task.expanded && hasSubtasks) || isAdding;
+  const isAdding = subtaskFormTaskId === task.id;
+  const hasSubtasks = task.childrenTasks && task.childrenTasks.length > 0;
+  const showSubtasks = (task.expanded && hasSubtasks) || isAdding;
 
   // Focus input when editing starts
   useEffect(() => {
@@ -47,7 +47,7 @@ export function TaskItem(props: TaskItemProps) {
   function handleSubmitSubtask(e: React.FormEvent) {
     e.preventDefault();
     if (newSubtaskTitle.trim()) {
-      handleAddSubtask(props.task.id, newSubtaskTitle);
+      handleAddSubtask(task.id, newSubtaskTitle);
       setNewSubtaskTitle('');
       setSubtaskFormTaskId(null); // Close the form
     }
@@ -55,7 +55,7 @@ export function TaskItem(props: TaskItemProps) {
 
   function handleBlur() {
     if (newSubtaskTitle.trim()) {
-      handleAddSubtask(props.task.id, newSubtaskTitle);
+      handleAddSubtask(task.id, newSubtaskTitle);
       setNewSubtaskTitle('');
     }
     setSubtaskFormTaskId(null);
@@ -66,20 +66,20 @@ export function TaskItem(props: TaskItemProps) {
     if (isAdding) {
       setSubtaskFormTaskId?.(null);
     } else {
-      setSubtaskFormTaskId?.(props.task.id);
-      if (props.updatable) handleUpdate({ ...props.task, expanded: true });
+      setSubtaskFormTaskId?.(task.id);
+      onUpdate?.({ ...task, expanded: true });
     }
   }
 
   function handleStartEdit(e: React.MouseEvent) {
     e.stopPropagation();
-    setEditTitle(props.task.title);
+    setEditTitle(task.title);
     setIsEditing(true);
   }
 
   function handleSaveEdit() {
-    if (editTitle.trim() && editTitle !== props.task.title) {
-      if (props.updatable) handleUpdate({ ...props.task, title: editTitle });
+    if (editTitle.trim() && editTitle !== task.title) {
+      onUpdate?.({ ...task, title: editTitle });
     }
     setIsEditing(false);
   }
@@ -89,13 +89,13 @@ export function TaskItem(props: TaskItemProps) {
   }
 
   return (
-    <div className={`w-full ${props.className}`}>
+    <div className={`w-full ${className}`}>
       <div
-        draggable={props.draggable}
+        draggable={draggable}
         onDragStart={(e) => {
           e.stopPropagation();
-          e.dataTransfer?.setData('text/plain', String(props.task.id));
-          setDraggedTaskId(props.task.id);
+          e.dataTransfer?.setData('text/plain', String(task.id));
+          setDraggedTaskId(task.id);
         }}
         onDragOver={(e) => {
           e.preventDefault();
@@ -110,13 +110,13 @@ export function TaskItem(props: TaskItemProps) {
           e.preventDefault();
           e.stopPropagation();
           setIsDragOver(false);
-          handleMoveTask(props.task.id);
+          handleMoveTask(task.id);
         }}
         className={`p-4 flex items-center justify-between cursor-pointer transition-colors duration-200 ${isDragOver ? 'bg-indigo-900/50 border-2 border-indigo-500 rounded-lg' : 'hover:bg-slate-700/30'
           }`}
         onClick={(e) => {
           e.stopPropagation();
-          navigate(routes.taskPage.path(props.task.id));
+          navigate(routes.taskPage.path(task.id));
         }}
       >
         <div className="flex items-center gap-4 grow py-2 -my-2">
@@ -124,12 +124,12 @@ export function TaskItem(props: TaskItemProps) {
             <button
               onClick={(e) => {
                 e.stopPropagation();
-                if (props.updatable) handleUpdate({ ...props.task, expanded: !props.task.expanded });
+                onUpdate?.({ ...task, expanded: !task.expanded });
               }}
               className="p-1 -ml-2 rounded hover:bg-slate-600 transition-colors duration-200"
-              title={props.task.expanded ? 'Colapsar sub-tarefas' : 'Expandir sub-tarefas'}
+              title={task.expanded ? 'Colapsar sub-tarefas' : 'Expandir sub-tarefas'}
             >
-              {props.task.expanded ? (
+              {task.expanded ? (
                 <ChevronDown className="w-4 h-4 text-gray-400" />
               ) : (
                 <ChevronRight className="w-4 h-4 text-gray-400" />
@@ -142,16 +142,16 @@ export function TaskItem(props: TaskItemProps) {
             className="relative cursor-pointer"
             onClick={(e) => {
               e.stopPropagation();
-              if (props.updatable) handleUpdate({ ...props.task, completed: !props.task.completed });
+              onUpdate?.({ ...task, completed: !task.completed });
             }}
-            title={props.task.completed ? 'Tornar pendente' : 'Concluir'}
+            title={task.completed ? 'Tornar pendente' : 'Concluir'}
           >
-            {props.task.completed ? (
+            {task.completed ? (
               <>
                 <CheckCircle2
                   className={`
                     w-6 h-6 text-green-400 transition-opacity duration-200
-                    ${props.updatable ? 'hover:opacity-0' : 'hover:opacity-100'}
+                    ${onUpdate ? 'hover:opacity-0' : 'hover:opacity-100'}
                   `}
                 />
                 <Circle className="w-6 h-6 text-gray-600 absolute top-0 left-0 opacity-0 hover:opacity-25 transition-opacity duration-200" />
@@ -180,18 +180,18 @@ export function TaskItem(props: TaskItemProps) {
           ) : (
             <span
               className={
-                props.task.completed
+                task.completed
                   ? `line-through text-gray-500 transition-all duration-200`
                   : `text-gray-200 transition-all duration-200`
               }
             >
-              {props.task.title}
+              {task.title}
             </span>
           )}
         </div>
 
         <div className="flex gap-2">
-          {props.canAddSubtask && (
+          {canAddSubtask && (
             <Button
               className='cursor-pointer hover:text-purple-400'
               variant="ghost"
@@ -203,7 +203,7 @@ export function TaskItem(props: TaskItemProps) {
             </Button>
           )}
 
-          {props.updatable && (
+          {onUpdate && (
             <Button
               className='cursor-pointer hover:text-blue-400'
               variant="ghost"
@@ -215,14 +215,14 @@ export function TaskItem(props: TaskItemProps) {
             </Button>
           )}
 
-          {props.deletable && (
+          {onDelete && (
             <Button
               className='cursor-pointer hover:text-[red]'
               variant="ghost"
               size="icon"
               onClick={(e) => {
                 e.stopPropagation()
-                if (props.deletable) handleDelete(props.task.id)
+                onDelete?.(task.id)
               }}
               title='Excluir tarefa'
             >
@@ -245,13 +245,13 @@ export function TaskItem(props: TaskItemProps) {
               />
             </div>
           )}
-          {props.task.childrenTasks.map((subtask) => (
+          {task.childrenTasks.map((subtask) => (
             <TaskItem
               key={subtask.id}
               task={subtask}
-              updatable={props.updatable}
-              deletable={props.deletable}
-              canAddSubtask={props.canAddSubtask}
+              onUpdate={onUpdate}
+              onDelete={onDelete}
+              canAddSubtask={canAddSubtask}
               draggable
             />
           ))}
