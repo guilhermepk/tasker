@@ -3,7 +3,8 @@ import { IpcResponse } from "@shared/models/interfaces/ipc-response.interface";
 import { FindTaskByIdResponse } from "@shared/models/responses/tasks/find-task-by-id.response";
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
-import { TaskData, TaskItem } from "../home/components/TaskItem";
+import { TaskItem } from "../home/components/TaskItem";
+import { TaskData } from "@renderer/contexts/HomeContext";
 
 export default function TaskPage() {
   const location = useLocation()
@@ -64,7 +65,9 @@ export default function TaskPage() {
               className=""
               key={task.fatherTask.id}
               task={{ ...task.fatherTask, childrenTasks: task.fatherTask.childrenTasks ? task.fatherTask.childrenTasks as TaskData[] : [] }}
-              subtaskFormTaskId={null}
+              updatable
+              deletable
+              canAddSubtask
             />
           </div>
         )
@@ -91,7 +94,9 @@ export default function TaskPage() {
                   className=""
                   key={childTask.id}
                   task={{ ...childTask, childrenTasks: childTask.childrenTasks ? childTask.childrenTasks as TaskData[] : [] }}
-                  subtaskFormTaskId={null}
+                  updatable
+                  deletable
+                  canAddSubtask
                 />
               ))}
             </div>

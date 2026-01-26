@@ -1,14 +1,20 @@
 import Card from '@renderer/components/Card'
+import { useHome } from '@renderer/contexts/HomeContext'
+import { useEffect, useState } from 'react';
 
-interface Props {
-  completed: number
-  total: number
-}
+interface Props { }
 
-export function TaskStats(props: Props) {
+export function TaskStats(_props: Props) {
+  const { tasks, calculateCompletedCount } = useHome();
+  const [completed, setCompleted] = useState(0);
+
+  useEffect(() => {
+    setCompleted(calculateCompletedCount());
+  }, [tasks]);
+
   const progress =
-    props.total > 0
-      ? Math.round((props.completed / props.total) * 100)
+    tasks.length > 0
+      ? Math.round((completed / tasks.length) * 100)
       : 0
 
   return (
@@ -18,8 +24,8 @@ export function TaskStats(props: Props) {
           <div>
             <p className="text-sm text-gray-400 mb-1">Progresso</p>
             <p className="text-2xl">
-              <span className="text-indigo-400">{props.completed}</span>
-              <span className="text-gray-500 text-lg"> de {props.total}</span>
+              <span className="text-indigo-400">{completed}</span>
+              <span className="text-gray-500 text-lg"> de {tasks.length}</span>
             </p>
           </div>
 
