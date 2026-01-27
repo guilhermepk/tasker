@@ -1,5 +1,5 @@
 import React from 'react'
-import { TaskItem } from './TaskItem'
+import { TaskCard } from './TaskCard'
 import { TaskForm } from './TaskForm'
 import Card from '@renderer/components/Card'
 import { useHome } from '@renderer/contexts/HomeContext'
@@ -14,7 +14,10 @@ export function TaskList(_props: Props) {
     handleCreateTask,
     handleUpdate,
     handleDelete,
-    newTaskTitle, setNewTaskTitle
+    newTaskTitle, setNewTaskTitle,
+    handleAddSubtask,
+    setDraggedTaskId,
+    subtaskFormTaskId, setSubtaskFormTaskId
   } = useHome();
 
   return (
@@ -41,13 +44,17 @@ export function TaskList(_props: Props) {
         </div>
       ) : (
         tasks.map((task) => (
-          <TaskItem
+          <TaskCard
             key={task.id}
             task={task}
             onUpdate={handleUpdate}
             onDelete={handleDelete}
-            canAddSubtask
+            onAddSubtask={handleAddSubtask}
+            onDrop={handleMoveTask}
+            onDragStart={setDraggedTaskId}
             draggable
+            subtaskFormTaskId={subtaskFormTaskId}
+            setSubtaskFormTaskId={setSubtaskFormTaskId}
           />
         ))
       )}

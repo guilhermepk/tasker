@@ -3,7 +3,7 @@ import { IpcResponse } from "@shared/models/interfaces/ipc-response.interface";
 import { FindTaskByIdResponse } from "@shared/models/responses/tasks/find-task-by-id.response";
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
-import { TaskItem } from "../home/components/TaskItem";
+import { TaskCard } from "../home/components/TaskCard";
 import { TaskData } from "@renderer/contexts/HomeContext";
 
 export default function TaskPage() {
@@ -61,7 +61,7 @@ export default function TaskPage() {
           <div>
             <p> Tarefa pai: </p>
 
-            <TaskItem
+            <TaskCard
               className=""
               key={task.fatherTask.id}
               task={{ ...task.fatherTask, childrenTasks: task.fatherTask.childrenTasks ? task.fatherTask.childrenTasks as TaskData[] : [] }}
@@ -90,7 +90,7 @@ export default function TaskPage() {
                 //   {childTask.title}
                 // </li>
 
-                <TaskItem
+                <TaskCard
                   className=""
                   key={childTask.id}
                   task={{ ...childTask, childrenTasks: childTask.childrenTasks ? childTask.childrenTasks as TaskData[] : [] }}

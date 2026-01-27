@@ -1,7 +1,7 @@
 import { TaskStats } from './components/TaskStats'
 import { TaskList } from './components/TaskList'
 import { TaskData, useHome } from '@renderer/contexts/HomeContext'
-import { TaskItem } from './components/TaskItem';
+import { TaskCard } from './components/TaskCard';
 
 export default function HomePage() {
   const {
@@ -27,7 +27,7 @@ export default function HomePage() {
         handleMoveTask(null);
       }}
     >
-      <TaskItem
+      <TaskCard
         task={fakeTask}
         onUpdate={(newData) => window.alert('Novas informações: ' + JSON.stringify(newData))}
         onDelete={(id) => window.alert('Deletar tarefa: ' + id)}

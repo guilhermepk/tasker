@@ -4,28 +4,25 @@ import { useNavigate } from 'react-router-dom'
 import { Button } from '../../../components/Button'
 import { TaskForm } from './TaskForm'
 import { routes } from '@renderer/common/routes'
-import { TaskData, useHome } from '@renderer/contexts/HomeContext'
+import { TaskData } from '@renderer/contexts/HomeContext'
 
-interface TaskItemProps {
+interface Props {
   onUpdate?: (newTaskData: TaskData) => void
-  onDelete: (id: number) => void,
-  canAddSubtask?: boolean,
+  onDelete?: (id: number) => void,
+  onAddSubtask?: (parentId: number, title: string) => void,
   task: TaskData
   className?: string,
-  draggable?: boolean
+  draggable?: boolean,
+  onDrop?: (targetId: number) => void,
+  onDragStart?: (taskId: number) => void,
+  subtaskFormTaskId?: number | null,
+  setSubtaskFormTaskId?: React.Dispatch<React.SetStateAction<number | null>>
 }
 
-export function TaskItem({
-  onUpdate, task, canAddSubtask, className, draggable, onDelete
-}: TaskItemProps) {
+export function TaskCard({
+  onUpdate, task, onAddSubtask, className, draggable, onDelete, onDrop, onDragStart, subtaskFormTaskId, setSubtaskFormTaskId
+}: Props) {
   const navigate = useNavigate();
-
-  const {
-    handleAddSubtask,
-    subtaskFormTaskId, setSubtaskFormTaskId,
-    handleMoveTask,
-    setDraggedTaskId
-  } = useHome();
 
   const [newSubtaskTitle, setNewSubtaskTitle] = useState('');
   const [isEditing, setIsEditing] = useState(false);
@@ -47,18 +44,18 @@ export function TaskItem({
   function handleSubmitSubtask(e: React.FormEvent) {
     e.preventDefault();
     if (newSubtaskTitle.trim()) {
-      handleAddSubtask(task.id, newSubtaskTitle);
+      onAddSubtask?.(task.id, newSubtaskTitle);
       setNewSubtaskTitle('');
-      setSubtaskFormTaskId(null); // Close the form
+      setSubtaskFormTaskId?.(null); // Close the form
     }
   }
 
   function handleBlur() {
     if (newSubtaskTitle.trim()) {
-      handleAddSubtask(task.id, newSubtaskTitle);
+      onAddSubtask?.(task.id, newSubtaskTitle);
       setNewSubtaskTitle('');
     }
-    setSubtaskFormTaskId(null);
+    setSubtaskFormTaskId?.(null);
   }
 
   function handleToggleAddSubtask(e: React.MouseEvent) {
@@ -95,7 +92,7 @@ export function TaskItem({
         onDragStart={(e) => {
           e.stopPropagation();
           e.dataTransfer?.setData('text/plain', String(task.id));
-          setDraggedTaskId(task.id);
+          onDragStart?.(task.id);
         }}
         onDragOver={(e) => {
           e.preventDefault();
@@ -110,7 +107,7 @@ export function TaskItem({
           e.preventDefault();
           e.stopPropagation();
           setIsDragOver(false);
-          handleMoveTask(task.id);
+          onDrop?.(task.id);
         }}
         className={`p-4 flex items-center justify-between cursor-pointer transition-colors duration-200 ${isDragOver ? 'bg-indigo-900/50 border-2 border-indigo-500 rounded-lg' : 'hover:bg-slate-700/30'
           }`}
@@ -191,7 +188,7 @@ export function TaskItem({
         </div>
 
         <div className="flex gap-2">
-          {canAddSubtask && (
+          {onAddSubtask && (
             <Button
               className='cursor-pointer hover:text-purple-400'
               variant="ghost"
@@ -246,12 +243,12 @@ export function TaskItem({
             </div>
           )}
           {task.childrenTasks.map((subtask) => (
-            <TaskItem
+            <TaskCard
               key={subtask.id}
               task={subtask}
               onUpdate={onUpdate}
               onDelete={onDelete}
-              canAddSubtask={canAddSubtask}
+              onAddSubtask={onAddSubtask}
               draggable
             />
           ))}
