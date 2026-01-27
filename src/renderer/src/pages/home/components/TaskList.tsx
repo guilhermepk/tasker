@@ -52,7 +52,6 @@ export function TaskList(_props: Props) {
             onAddSubtask={handleAddSubtask}
             onDrop={handleMoveTask}
             onDragStart={setDraggedTaskId}
-            draggable
             subtaskFormTaskId={subtaskFormTaskId}
             setSubtaskFormTaskId={setSubtaskFormTaskId}
           />

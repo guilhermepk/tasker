@@ -12,7 +12,6 @@ interface Props {
   onAddSubtask?: (parentId: number, title: string) => void,
   task: TaskData
   className?: string,
-  draggable?: boolean,
   onDrop?: (targetId: number) => void,
   onDragStart?: (taskId: number) => void,
   subtaskFormTaskId?: number | null,
@@ -20,9 +19,11 @@ interface Props {
 }
 
 export function TaskCard({
-  onUpdate, task, onAddSubtask, className, draggable, onDelete, onDrop, onDragStart, subtaskFormTaskId, setSubtaskFormTaskId
+  onUpdate, task, onAddSubtask, className, onDelete, onDrop, onDragStart, subtaskFormTaskId, setSubtaskFormTaskId
 }: Props) {
   const navigate = useNavigate();
+
+  const [draggable, setDraggable] = useState(!!onDragStart && !!onDrop);
 
   const [newSubtaskTitle, setNewSubtaskTitle] = useState('');
   const [isEditing, setIsEditing] = useState(false);
@@ -33,13 +34,6 @@ export function TaskCard({
   const isAdding = subtaskFormTaskId === task.id;
   const hasSubtasks = task.childrenTasks && task.childrenTasks.length > 0;
   const showSubtasks = (task.expanded && hasSubtasks) || isAdding;
-
-  // Focus input when editing starts
-  useEffect(() => {
-    if (isEditing && editInputRef.current) {
-      editInputRef.current.focus();
-    }
-  }, [isEditing]);
 
   function handleSubmitSubtask(e: React.FormEvent) {
     e.preventDefault();
@@ -84,6 +78,17 @@ export function TaskCard({
   function handleCancelEdit() {
     setIsEditing(false);
   }
+
+  // Focus input when editing starts
+  useEffect(() => {
+    if (isEditing && editInputRef.current) {
+      editInputRef.current.focus();
+    }
+  }, [isEditing]);
+
+  useEffect(() => {
+    setDraggable(!!onDragStart && !!onDrop);
+  }, [onDragStart, onDrop]);
 
   return (
     <div className={`w-full ${className}`}>
@@ -249,7 +254,10 @@ export function TaskCard({
               onUpdate={onUpdate}
               onDelete={onDelete}
               onAddSubtask={onAddSubtask}
-              draggable
+              onDrop={onDrop}
+              onDragStart={onDragStart}
+              subtaskFormTaskId={subtaskFormTaskId}
+              setSubtaskFormTaskId={setSubtaskFormTaskId}
             />
           ))}
         </div>
