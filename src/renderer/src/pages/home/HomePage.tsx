@@ -27,16 +27,6 @@ export default function HomePage() {
         handleMoveTask(null);
       }}
     >
-      <TaskCard
-        task={fakeTask}
-        onUpdate={(newData) => window.alert('Novas informações: ' + JSON.stringify(newData))}
-        onDelete={(id) => window.alert('Deletar tarefa: ' + id)}
-        onAddSubtask={(parentId, title) => window.alert('Adicionar sub-tarefa: ' + parentId + ' - ' + title)}
-        onDrop={(targetId) => window.alert('Mover tarefa para: ' + targetId)}
-        onDragStart={(taskId) => window.alert('Arrastar tarefa: ' + taskId)}
-        subtaskFormTaskId={null}
-        setSubtaskFormTaskId={() => { }}
-      />
 
       <div className="max-w-2xl mx-auto">
         <TaskStats />
