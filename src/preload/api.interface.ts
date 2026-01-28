@@ -14,6 +14,8 @@ export interface ContextBridgeApi {
       findById: (payload: FindTaskByIdDto) => Promise<IpcResponse<FindTaskByIdResponse>>
       update: (payload: UpdateTaskDto) => Promise<IpcResponse<{ message: string }>>
       delete: (payload: DeleteTaskDto) => Promise<IpcResponse<{ message: string }>>
-
+    },
+    google: {
+      startAuth: () => Promise<IpcResponse<null>>
     }
   }

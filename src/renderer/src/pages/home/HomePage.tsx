@@ -1,7 +1,7 @@
 import { TaskStats } from './components/TaskStats'
 import { TaskList } from './components/TaskList'
-import { TaskData, useHome } from '@renderer/contexts/HomeContext'
-import { TaskCard } from './components/TaskCard';
+import { useHome } from '@renderer/contexts/HomeContext'
+import GoogleAuthSection from './sections/GoogleAuthSection';
 
 export default function HomePage() {
   const {
@@ -9,14 +9,6 @@ export default function HomePage() {
     handleMoveTask,
     calculateCompletedCount
   } = useHome();
-
-  const fakeTask: TaskData = {
-    id: 1,
-    completed: false,
-    title: 'Falsa',
-    childrenTasks: [],
-    expanded: false
-  }
 
   return (
     <div
@@ -29,6 +21,8 @@ export default function HomePage() {
     >
 
       <div className="max-w-2xl mx-auto">
+        <GoogleAuthSection />
+
         <TaskStats />
 
         <TaskList />

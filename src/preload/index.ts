@@ -17,6 +17,9 @@ const api: ContextBridgeApi = {
     create: (payload: CreateTaskDto): Promise<IpcResponse<CreateTaskResponse>> => ipcRenderer.invoke('tasks:create', payload),
     update: (payload: UpdateTaskDto): Promise<IpcResponse<{ message: string }>> => ipcRenderer.invoke('tasks:update', payload),
     delete: (payload: DeleteTaskDto): Promise<IpcResponse<{ message: string }>> => ipcRenderer.invoke('tasks:delete', payload),
+  },
+  google: {
+    startAuth: (): Promise<IpcResponse<null>> => ipcRenderer.invoke('google/start-auth')
   }
 }
 
