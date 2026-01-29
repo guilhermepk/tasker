@@ -4,21 +4,7 @@ import { Auth } from 'googleapis';
 import { shell } from 'electron';
 import http from 'http';
 import url from 'url';
-
-const htmlResponse = `
-<!DOCTYPE html>
-<html lang="pt-br">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Autenticação do Google concluída</title>
-</head>
-<body>
-    <h1>Autenticação do Google concluída!</h1>
-    <p>Você já pode fechar esta janela.</p>
-</body>
-</html>
-`;
+import { googleAuthHtmlResponse } from "./google-auth-html-response";
 
 @Injectable()
 export class StartGoogleAuthUseCase {
@@ -37,7 +23,7 @@ export class StartGoogleAuthUseCase {
             const querySearch = new url.URL(request.url, 'http://localhost:3000').searchParams;
             const code = querySearch.get('code');
   
-            response.end(htmlResponse);
+            response.end(googleAuthHtmlResponse);
             server?.close();
   
             if (code) {
