@@ -6,6 +6,7 @@ import { FindAllTasksResponse } from "src/shared/models/responses/tasks/find-all
 import { CreateTaskResponse } from "src/shared/models/responses/tasks/create-task.response"
 import { FindTaskByIdDto } from "@main/tasks/models/dtos/find-task-by-id.dto"
 import { FindTaskByIdResponse } from "@shared/models/responses/tasks/find-task-by-id.response"
+import { IsGoogleAuthAuthenticatedResponse } from "@shared/models/responses/google/is-google-auth-authenticated.response"
 
 export interface ContextBridgeApi {
     tasks: {
@@ -16,6 +17,8 @@ export interface ContextBridgeApi {
       delete: (payload: DeleteTaskDto) => Promise<IpcResponse<{ message: string }>>
     },
     google: {
-      startAuth: () => Promise<IpcResponse<null>>
+      startAuth: () => Promise<IpcResponse<null>>,
+      isAuthenticated: () => Promise<IpcResponse<IsGoogleAuthAuthenticatedResponse>>,
+      onAuthSuccess: (callback: (payload: { email: string | null }) => void) => (() => void)
     }
   }

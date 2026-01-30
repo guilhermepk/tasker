@@ -3,6 +3,7 @@ import { Auth } from "googleapis";
 import { StartGoogleAuthUseCase } from "./use-cases/start-auth/start-google-auth.use-case";
 import * as dotenv from 'dotenv';
 import { SecureDataManagerModule } from "@main/secure-data-manager/secure-data-manager.module";
+import { IsGoogleAuthenticatedUseCase } from "./use-cases/is-authenticated/is-google-authenticated.use-case";
 
 dotenv.config();
 
@@ -21,7 +22,8 @@ dotenv.config();
           'http://localhost:3000' // Porta local temporária
         );
       }
-    }
+    },
+    IsGoogleAuthenticatedUseCase
   ]
 })
 export class GoogleModule {}

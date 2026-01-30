@@ -76,6 +76,8 @@ export function handleError<OptionsType extends ErrorOptions>(error: any, errorO
       [`${error.message ?? error}`]
     );
 
+  console.error(newError);
+
   switch (handleType) {
     case 'return':
 

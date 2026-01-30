@@ -1,5 +1,5 @@
-import { registerStartGoogleAuthIpc } from "./google/use-cases/start-auth/start-google-auth.ipc";
+import { registerGoogleIpc } from "./google/google.ipc";
 
 export function registerApisIpc(){
-  registerStartGoogleAuthIpc();
+  registerGoogleIpc();
 }

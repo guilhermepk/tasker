@@ -9,6 +9,7 @@ import { FindAllTasksResponse } from '@shared/models/responses/tasks/find-all-ta
 import { CreateTaskResponse } from '@shared/models/responses/tasks/create-task.response';
 import { FindTaskByIdDto } from '@main/tasks/models/dtos/find-task-by-id.dto';
 import { FindTaskByIdResponse } from '@shared/models/responses/tasks/find-task-by-id.response';
+import { IsGoogleAuthAuthenticatedResponse } from '@shared/models/responses/google/is-google-auth-authenticated.response';
 
 const api: ContextBridgeApi = {
   tasks: {
@@ -19,9 +20,17 @@ const api: ContextBridgeApi = {
     delete: (payload: DeleteTaskDto): Promise<IpcResponse<{ message: string }>> => ipcRenderer.invoke('tasks:delete', payload),
   },
   google: {
-    startAuth: (): Promise<IpcResponse<null>> => ipcRenderer.invoke('google/start-auth')
+    startAuth: (): Promise<IpcResponse<null>> => ipcRenderer.invoke('google/start-auth'),
+    isAuthenticated: (): Promise<IpcResponse<IsGoogleAuthAuthenticatedResponse>> => ipcRenderer.invoke('google/is-authenticated'),
+    onAuthSuccess(callback: (payload: { email: string }) => void){
+      const subscription = (_event, payload) => callback(payload);
+      ipcRenderer.on('google-auth-success', subscription);
+      return () => ipcRenderer.removeListener('google-auth-success', subscription);
+    }
   }
 }
+
+
 
 if (process.contextIsolated) {
   try {
