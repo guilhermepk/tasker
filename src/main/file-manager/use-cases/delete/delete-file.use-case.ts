@@ -5,17 +5,18 @@ import path from 'path';
 import { app } from "electron";
 
 @Injectable()
-export class SaveFileUseCase {
+export class DeleteFileUseCase {
   constructor(){}
 
   async execute(
-    stringData: string,
     fileName: string
   ): Promise<void> {
     return await tryCatch(async () => {
-      const FILE_PATH = path.join(app.getPath('userData'), fileName);
+      const filePath = path.join(app.getPath('userData'), fileName);
 
-      fs.writeFileSync(FILE_PATH, stringData);
-    }, `Erro ao salvar arquivo`);
+      if (fs.existsSync(filePath)) {  
+        fs.unlinkSync(filePath);
+      }
+    }, `Erro ao deletar arquivo`);
   }
 }

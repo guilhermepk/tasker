@@ -23,11 +23,18 @@ export default function GoogleAuthSection() {
   }, []);
 
   async function handleLogout() {
-    window.alert('Ainda não implementado');
+    const response: IpcResponse<void> = await window.api.google.logout();
+
+    if (response.success) {
+      setIsAuthenticated(false);
+      setEmail(null);
+    } else {
+      window.alert(formatIpcError(response.error));
+    }
   }
 
   async function handleAuth() {
-    const response = await window.api.google.startAuth();
+    const response: IpcResponse<null> = await window.api.google.startAuth();
 
     if (response.success) {
 
@@ -38,8 +45,6 @@ export default function GoogleAuthSection() {
 
   useEffect(() => {
     window.api.google.onAuthSuccess((payload: { email: string | null }) => {
-      console.log('sinal recebido');
-
       setIsAuthenticated(true);
       setEmail(payload.email);
     });

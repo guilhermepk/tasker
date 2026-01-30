@@ -26,7 +26,13 @@ const api: ContextBridgeApi = {
       const subscription = (_event, payload) => callback(payload);
       ipcRenderer.on('google-auth-success', subscription);
       return () => ipcRenderer.removeListener('google-auth-success', subscription);
-    }
+    },
+    onLogoutSuccess: (callback: () => void) => {
+      const subscription = (_event) => callback();
+      ipcRenderer.on('google-logout-success', subscription);
+      return () => ipcRenderer.removeListener('google-logout-success', subscription);
+    },
+    logout: () => ipcRenderer.invoke('google/logout')
   }
 }
 

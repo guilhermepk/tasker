@@ -4,6 +4,7 @@ import { StartGoogleAuthUseCase } from "./use-cases/start-auth/start-google-auth
 import * as dotenv from 'dotenv';
 import { SecureDataManagerModule } from "@main/secure-data-manager/secure-data-manager.module";
 import { IsGoogleAuthenticatedUseCase } from "./use-cases/is-authenticated/is-google-authenticated.use-case";
+import { LogoutGoogleUseCase } from "./use-cases/logout-google/logout-google.use-case";
 
 dotenv.config();
 
@@ -23,7 +24,8 @@ dotenv.config();
         );
       }
     },
-    IsGoogleAuthenticatedUseCase
+    IsGoogleAuthenticatedUseCase,
+    LogoutGoogleUseCase
   ]
 })
 export class GoogleModule {}

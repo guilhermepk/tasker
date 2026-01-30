@@ -1,7 +1,7 @@
 import { tryCatch } from "@main/common/utils/try-catch";
 import { Inject, Injectable } from "@nestjs/common";
 import { Auth } from 'googleapis';
-import { BrowserWindow, ipcMain, shell } from 'electron';
+import { BrowserWindow, shell } from 'electron';
 import http from 'http';
 import url from 'url';
 import { googleAuthHtmlResponse } from "./google-auth-html-response";
@@ -36,12 +36,13 @@ export class StartGoogleAuthUseCase {
               const { access_token, refresh_token } = tokens;
               
               if (access_token && refresh_token) {
+                this.oAuth2Client.setCredentials({ access_token, refresh_token });
+
                 await this.saveGoogleTokenUseCase.execute({ accessToken: access_token, refreshToken: refresh_token });
 
                 const tokenInfo = await this.oAuth2Client.getTokenInfo(access_token)
                   .catch(() => null);
 
-                console.log('emitindo sinal com email');
                 BrowserWindow.getAllWindows().forEach((win) => {
                   win.webContents.send('google-auth-success', { email: tokenInfo?.email ?? null });
                 });

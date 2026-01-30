@@ -10,7 +10,6 @@ export default function App() {
           <Route path={routes.homePage.path} element={<routes.homePage.element />} />
           <Route path={routes.taskPage.path(':id')} element={<routes.taskPage.element />} />
         </Route>
-
       </Routes>
     </HashRouter>
   )
