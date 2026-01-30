@@ -5,12 +5,17 @@ import { shell } from 'electron';
 import http from 'http';
 import url from 'url';
 import { googleAuthHtmlResponse } from "./google-auth-html-response";
+import { SaveGoogleTokenUseCase } from "@main/secure-data-manager/use-cases/save-google-token/save-google-token.use-case";
+import { BadGatewayError } from "@shared/models/errors/bad-gateway.error";
 
 @Injectable()
 export class StartGoogleAuthUseCase {
   constructor(
     @Inject(Auth.OAuth2Client)
-    private readonly oAuth2Client: Auth.OAuth2Client
+    private readonly oAuth2Client: Auth.OAuth2Client,
+
+    @Inject(SaveGoogleTokenUseCase)
+    private readonly saveGoogleTokenUseCase: SaveGoogleTokenUseCase
   ){}
 
   async execute(): Promise<void> {
@@ -28,7 +33,13 @@ export class StartGoogleAuthUseCase {
   
             if (code) {
               const tokens = await this.oAuth2Client.getToken(code).then(res => res.tokens);
-              console.log('Tokens:', tokens)
+              const { access_token, refresh_token } = tokens;
+              
+              if (access_token && refresh_token) {
+                await this.saveGoogleTokenUseCase.execute({ accessToken: access_token, refreshToken: refresh_token });
+              } else {
+                throw new BadGatewayError('Não foi possível obter os tokens de autenticação do Google');
+              }
             }
           }
         }).listen(3000);

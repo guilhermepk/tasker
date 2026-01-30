@@ -2,10 +2,14 @@ import { Module } from "@nestjs/common";
 import { Auth } from "googleapis";
 import { StartGoogleAuthUseCase } from "./use-cases/start-auth/start-google-auth.use-case";
 import * as dotenv from 'dotenv';
+import { SecureDataManagerModule } from "@main/secure-data-manager/secure-data-manager.module";
 
 dotenv.config();
 
 @Module({
+  imports: [
+    SecureDataManagerModule
+  ],
   providers: [
     StartGoogleAuthUseCase,
     {
