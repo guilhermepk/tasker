@@ -1,5 +1,5 @@
 import { Inject, Logger, Module, OnApplicationBootstrap } from "@nestjs/common";
-import { Auth } from "googleapis";
+import { Auth, drive_v3, google } from "googleapis";
 import { StartGoogleAuthUseCase } from "./use-cases/start-auth/start-google-auth.use-case";
 import * as dotenv from 'dotenv';
 import { SecureDataManagerModule } from "@main/secure-data-manager/secure-data-manager.module";
@@ -8,6 +8,9 @@ import { LogoutGoogleUseCase } from "./use-cases/logout-google/logout-google.use
 import { ReadGoogleTokenUseCase } from "@main/secure-data-manager/use-cases/read-google-token/read-google-token.use-case";
 import { tryCatch } from "@main/common/utils/try-catch";
 import { GoogleKeys } from "@main/secure-data-manager/models/types/google-keys.type";
+import { FindGoogleFileByNameUseCase } from "./use-cases/find-file-by-name/find-google-file-by-name.use-case";
+import { CreateGooldeFolderUseCase } from "./use-cases/create-folder/create-google-folder.use-case";
+import { SyncDatabaseUseCase } from "./use-cases/sync-database/sync-database.use-case";
 
 dotenv.config();
 
@@ -17,6 +20,11 @@ dotenv.config();
   ],
   providers: [
     StartGoogleAuthUseCase,
+    IsGoogleAuthenticatedUseCase,
+    LogoutGoogleUseCase,
+    FindGoogleFileByNameUseCase,
+    CreateGooldeFolderUseCase,
+    SyncDatabaseUseCase,
     {
       provide: Auth.OAuth2Client,
       useFactory: () => {
@@ -27,8 +35,11 @@ dotenv.config();
         );
       }
     },
-    IsGoogleAuthenticatedUseCase,
-    LogoutGoogleUseCase
+    {
+      provide: drive_v3.Drive,
+      useFactory: (oAuth2Client: Auth.OAuth2Client) => google.drive({ version: 'v3', auth: oAuth2Client }),
+      inject: [Auth.OAuth2Client]
+    }
   ]
 })
 export class GoogleModule implements OnApplicationBootstrap {

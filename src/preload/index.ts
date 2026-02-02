@@ -32,7 +32,8 @@ const api: ContextBridgeApi = {
       ipcRenderer.on('google-logout-success', subscription);
       return () => ipcRenderer.removeListener('google-logout-success', subscription);
     },
-    logout: () => ipcRenderer.invoke('google/logout')
+    logout: () => ipcRenderer.invoke('google/logout'),
+    syncDatabase: (): Promise<IpcResponse<void>> => ipcRenderer.invoke('google/sync-database')
   }
 }
 

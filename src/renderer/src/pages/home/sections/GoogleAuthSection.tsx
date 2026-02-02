@@ -43,6 +43,16 @@ export default function GoogleAuthSection() {
     }
   }
 
+  async function handleSyncDatabase() {
+    const response: IpcResponse<void> = await window.api.google.syncDatabase();
+
+    if (response.success) {
+      window.alert("Sincronização concluída com sucesso!");
+    } else {
+      window.alert(formatIpcError(response.error));
+    }
+  }
+
   useEffect(() => {
     window.api.google.onAuthSuccess((payload: { email: string | null }) => {
       setIsAuthenticated(true);
@@ -69,6 +79,13 @@ export default function GoogleAuthSection() {
               className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-md"
             >
               Desconectar do Google
+            </button>
+
+            <button
+              onClick={handleSyncDatabase}
+              className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md"
+            >
+              Sincronizar com o Google
             </button>
           </>
         )

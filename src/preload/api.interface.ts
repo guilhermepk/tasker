@@ -21,6 +21,7 @@ export interface ContextBridgeApi {
       isAuthenticated: () => Promise<IpcResponse<IsGoogleAuthAuthenticatedResponse>>,
       onAuthSuccess: (callback: (payload: { email: string | null }) => void) => (() => void),
       onLogoutSuccess: (callback: () => void) => void,
-      logout: () => Promise<IpcResponse<void>>
+      logout: () => Promise<IpcResponse<void>>,
+      syncDatabase: () => Promise<IpcResponse<void>>
     }
   }
