@@ -11,12 +11,14 @@ import { GoogleKeys } from "@main/secure-data-manager/models/types/google-keys.t
 import { FindGoogleFileByNameUseCase } from "./use-cases/find-file-by-name/find-google-file-by-name.use-case";
 import { CreateGooldeFolderUseCase } from "./use-cases/create-folder/create-google-folder.use-case";
 import { SyncDatabaseUseCase } from "./use-cases/sync-database/sync-database.use-case";
+import { FileManagerModule } from "@main/file-manager/file-manager.module";
 
 dotenv.config();
 
 @Module({
   imports: [
-    SecureDataManagerModule
+    SecureDataManagerModule,
+    FileManagerModule
   ],
   providers: [
     StartGoogleAuthUseCase,

@@ -3,7 +3,11 @@ import { IpcResponse } from "@shared/models/interfaces/ipc-response.interface";
 import { IsGoogleAuthAuthenticatedResponse } from "@shared/models/responses/google/is-google-auth-authenticated.response";
 import { useEffect, useState } from "react";
 
-export default function GoogleAuthSection() {
+interface props {
+  onSyncDatabase?: () => void;
+}
+
+export default function GoogleAuthSection({ onSyncDatabase }: props) {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const [email, setEmail] = useState<string | null>(null);
 
@@ -48,6 +52,7 @@ export default function GoogleAuthSection() {
 
     if (response.success) {
       window.alert("Sincronização concluída com sucesso!");
+      onSyncDatabase?.();
     } else {
       window.alert(formatIpcError(response.error));
     }

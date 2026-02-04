@@ -7,8 +7,13 @@ export default function HomePage() {
   const {
     tasks,
     handleMoveTask,
-    calculateCompletedCount
+    calculateCompletedCount,
+    fetchTasks
   } = useHome();
+
+  async function handleSyncDatabase() {
+    await fetchTasks();
+  }
 
   return (
     <div
@@ -21,7 +26,7 @@ export default function HomePage() {
     >
 
       <div className="max-w-2xl mx-auto">
-        <GoogleAuthSection />
+        <GoogleAuthSection onSyncDatabase={handleSyncDatabase} />
 
         <TaskStats />
 

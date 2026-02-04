@@ -32,7 +32,9 @@ type HomeContextType = {
 
   handleMoveTask: (targetId: number | null) => void,
 
-  calculateCompletedCount: () => number
+  calculateCompletedCount: () => number,
+
+  fetchTasks: () => Promise<void>
 }
 
 const HomeContext = createContext<HomeContextType | null>(null);
@@ -253,7 +255,8 @@ export function HomeProvider({ children }: { children: ReactNode }): JSX.Element
       newTaskTitle, setNewTaskTitle,
       draggedTaskId, setDraggedTaskId,
       handleMoveTask,
-      calculateCompletedCount
+      calculateCompletedCount,
+      fetchTasks
     }}>
       {children}
     </HomeContext.Provider>

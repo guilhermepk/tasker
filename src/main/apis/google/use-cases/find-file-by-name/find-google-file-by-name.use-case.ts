@@ -20,12 +20,16 @@ export class FindGoogleFileByNameUseCase {
 
       const query = this.queryFactory(data);
 
-       const response = await this.googleDriveClient.files.list({
+      const fields = this.fieldsStringFactory(data);
+
+      const searchObject: drive_v3.Params$Resource$Files$List = {
         q: query,
         spaces: 'drive',
-        fields: 'files(id, name)',
+        fields: fields,
         auth: this.oAuth2Client,
-      });
+      };
+
+      const response = await this.googleDriveClient.files.list(searchObject);
 
       const files = response.data.files;
 
@@ -47,5 +51,14 @@ export class FindGoogleFileByNameUseCase {
     if (parentId) query += ` and '${parentId}' in parents`;
 
     return query;
+  }
+
+  private fieldsStringFactory(
+    data: FindGoogleFileByNameDto
+  ): string {
+    const { fields } = data;
+
+    if (!fields || fields.length < 1) return 'files(id)';
+    else return `files(id, ${fields.join(', ')})`;
   }
 }
