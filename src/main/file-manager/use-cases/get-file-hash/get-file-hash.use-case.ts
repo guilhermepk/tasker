@@ -2,13 +2,17 @@ import { tryCatch } from "@main/common/utils/try-catch";
 import { Injectable } from "@nestjs/common";
 import crypto from 'crypto';
 import fs from 'fs';
+import path from "path";
+import { app } from "electron";
 
 @Injectable()
 export class GetFileHashUseCase {
   constructor(){}
 
-  async execute(filePath: string): Promise<string> {
+  async execute(fileName: string): Promise<string> {
     return await tryCatch(async () => {
+      const filePath = path.join(app.getPath('userData'), fileName);
+
       return new Promise((resolve, reject) => {
         const hash = crypto.createHash('md5');
         const stream = fs.createReadStream(filePath); 
@@ -19,6 +23,6 @@ export class GetFileHashUseCase {
 
         stream.on('error', (error) => reject(error));
       });
-    }, `Erro ao calcular hash do arquivo ${filePath}`);
+    }, `Erro ao calcular hash do arquivo ${fileName}`);
   }
 }

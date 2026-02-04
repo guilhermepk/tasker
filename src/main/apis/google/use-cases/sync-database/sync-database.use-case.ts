@@ -64,8 +64,7 @@ export class SyncDatabaseUseCase {
   ): Promise<void> {
     console.log('Sincronizando...')
 
-    const databaseFilePath = path.join(app.getPath('userData'), DATABASE_FILE_NAME);
-    const localFileHash = await this.getFileHashUseCase.execute(databaseFilePath);
+    const localFileHash = await this.getFileHashUseCase.execute(DATABASE_FILE_NAME);
     const lastSyncHash: string = await this.getLocalLastSyncHash();
 
     const syncSituation: SyncSituationEnum = await this.compareHashes(
@@ -171,8 +170,7 @@ export class SyncDatabaseUseCase {
     console.log('Criando arquivo...')
     await this.createFile(createdFolderId);
     
-    const databaseFilePath = path.join(app.getPath('userData'), DATABASE_FILE_NAME);
-    const localFileHash = await this.getFileHashUseCase.execute(databaseFilePath);
+    const localFileHash = await this.getFileHashUseCase.execute(DATABASE_FILE_NAME);
     await this.saveLastSyncHash(localFileHash);
   }
 
@@ -242,14 +240,12 @@ export class SyncDatabaseUseCase {
     const fileContent = await this.readFileUseCase.execute(LAST_SYNC_HASH_FILE_NAME);
 
     if (!fileContent) {
-      const databaseFilePath = path.join(app.getPath('userData'), DATABASE_FILE_NAME);
-      return await this.getFileHashUseCase.execute(databaseFilePath);
+      return await this.getFileHashUseCase.execute(DATABASE_FILE_NAME);
     } else {
       const lastSyncHashFileDto: LastSyncHashFileDto = plainToInstance(LastSyncHashFileDto, JSON.parse(fileContent));
       const errors = await validate(lastSyncHashFileDto);
       if (errors.length > 0) {
-        const databaseFilePath = path.join(app.getPath('userData'), DATABASE_FILE_NAME);
-        return await this.getFileHashUseCase.execute(databaseFilePath);
+        return await this.getFileHashUseCase.execute(DATABASE_FILE_NAME);
       }
       else return lastSyncHashFileDto.lastSyncHash;
     }
