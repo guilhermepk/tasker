@@ -12,6 +12,9 @@ import { FindGoogleFileByNameUseCase } from "./use-cases/find-file-by-name/find-
 import { CreateGooldeFolderUseCase } from "./use-cases/create-folder/create-google-folder.use-case";
 import { SyncDatabaseUseCase } from "./use-cases/sync-database/sync-database.use-case";
 import { FileManagerModule } from "@main/file-manager/file-manager.module";
+import { SaveLastSyncHashUseCase } from "./use-cases/save-last-sync-hash/save-last-sync-hash.use-case";
+import { UpdateCloudDatabaseFileUseCase } from "./use-cases/update-cloud-database-file/update-cloud-database-file.use-case";
+import { DownloadCloudDatabaseFileUseCase } from "./use-cases/download-cloud-database-file/download-cloud-database-file.use-case";
 
 dotenv.config();
 
@@ -27,6 +30,9 @@ dotenv.config();
     FindGoogleFileByNameUseCase,
     CreateGooldeFolderUseCase,
     SyncDatabaseUseCase,
+    SaveLastSyncHashUseCase,
+    UpdateCloudDatabaseFileUseCase,
+    DownloadCloudDatabaseFileUseCase,
     {
       provide: Auth.OAuth2Client,
       useFactory: () => {

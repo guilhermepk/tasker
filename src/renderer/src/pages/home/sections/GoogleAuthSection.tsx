@@ -1,7 +1,11 @@
 import formatIpcError from "@renderer/utils/format-ipc-error";
 import { IpcResponse } from "@shared/models/interfaces/ipc-response.interface";
 import { IsGoogleAuthAuthenticatedResponse } from "@shared/models/responses/google/is-google-auth-authenticated.response";
+import { SyncDatabaseResponse } from "@shared/models/responses/google/sync-database.response";
 import { useEffect, useState } from "react";
+import { toast } from 'react-hot-toast';
+import ConflictToast from "./components/ConflictToast";
+import ConflictToast2 from "./components/c2";
 
 interface props {
   onSyncDatabase?: () => void;
@@ -48,21 +52,49 @@ export default function GoogleAuthSection({ onSyncDatabase }: props) {
   }
 
   async function handleSyncDatabase() {
-    const response: IpcResponse<void> = await window.api.google.syncDatabase();
+    const response: IpcResponse<SyncDatabaseResponse> = await window.api.google.syncDatabase();
 
     if (response.success) {
-      window.alert("Sincronização concluída com sucesso!");
-      onSyncDatabase?.();
+      if (response.data.finished) {
+        window.alert("Sincronização concluída com sucesso!");
+        onSyncDatabase?.();
+      }
     } else {
       window.alert(formatIpcError(response.error));
     }
   }
 
-  useEffect(() => {
+  function subscribeToAuthSuccess() {
     window.api.google.onAuthSuccess((payload: { email: string | null }) => {
       setIsAuthenticated(true);
       setEmail(payload.email);
     });
+  }
+
+  function subscribeToSyncConflict() {
+    function handleSyncConflict() {
+      toast.custom(
+        (t) => <ConflictToast t={t} />,
+        { duration: Infinity }
+      );
+    }
+
+    window.api.google.onSyncConflict(handleSyncConflict);
+  }
+
+  useEffect(() => {
+    subscribeToAuthSuccess();
+    subscribeToSyncConflict();
+
+    toast.custom(
+      (t) => <ConflictToast t={t} />,
+      { duration: Infinity }
+    );
+
+    toast.custom(
+      (t) => <ConflictToast2 t={t} />,
+      { duration: Infinity }
+    );
   }, []);
 
   return (

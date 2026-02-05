@@ -7,6 +7,7 @@ import { CreateTaskResponse } from "src/shared/models/responses/tasks/create-tas
 import { FindTaskByIdDto } from "@main/tasks/models/dtos/find-task-by-id.dto"
 import { FindTaskByIdResponse } from "@shared/models/responses/tasks/find-task-by-id.response"
 import { IsGoogleAuthAuthenticatedResponse } from "@shared/models/responses/google/is-google-auth-authenticated.response"
+import { SyncDatabaseResponse } from "@shared/models/responses/google/sync-database.response"
 
 export interface ContextBridgeApi {
     tasks: {
@@ -22,6 +23,7 @@ export interface ContextBridgeApi {
       onAuthSuccess: (callback: (payload: { email: string | null }) => void) => (() => void),
       onLogoutSuccess: (callback: () => void) => void,
       logout: () => Promise<IpcResponse<void>>,
-      syncDatabase: () => Promise<IpcResponse<void>>
+      syncDatabase: () => Promise<IpcResponse<SyncDatabaseResponse>>,
+      onSyncConflict: (callback: () => void) => void
     }
   }

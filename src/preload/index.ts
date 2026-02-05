@@ -10,6 +10,7 @@ import { CreateTaskResponse } from '@shared/models/responses/tasks/create-task.r
 import { FindTaskByIdDto } from '@main/tasks/models/dtos/find-task-by-id.dto';
 import { FindTaskByIdResponse } from '@shared/models/responses/tasks/find-task-by-id.response';
 import { IsGoogleAuthAuthenticatedResponse } from '@shared/models/responses/google/is-google-auth-authenticated.response';
+import { SyncDatabaseResponse } from '@shared/models/responses/google/sync-database.response';
 
 const api: ContextBridgeApi = {
   tasks: {
@@ -33,7 +34,12 @@ const api: ContextBridgeApi = {
       return () => ipcRenderer.removeListener('google-logout-success', subscription);
     },
     logout: () => ipcRenderer.invoke('google/logout'),
-    syncDatabase: (): Promise<IpcResponse<void>> => ipcRenderer.invoke('google/sync-database')
+    syncDatabase: (): Promise<IpcResponse<SyncDatabaseResponse>> => ipcRenderer.invoke('google/sync-database'),
+    onSyncConflict: (callback: () => void) => {
+      const subscription = (_event) => callback();
+      ipcRenderer.on('google-sync-conflict', subscription);
+      return () => ipcRenderer.removeListener('google-sync-conflict', subscription);
+    },
   }
 }
 
