@@ -12,10 +12,43 @@ body {
   align-items: center;
   justify-content: center;
   overflow-y: auto;
-  overflow-x: auto;
+  overflow-x: hidden;
   font-family: 'DM Sans', sans-serif;
   user-select: none;
   background-color: #0f172a;
   color: white;
+  width: 100vw;
 }
 
+@layer utilities {
+  /* Firefox */
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: #8b5cf6 transparent; /* Roxo e fundo transparente */
+  }
+
+  /* Chrome, Edge, Safari, Electron */
+  ::-webkit-scrollbar {
+    width: 8px; /* Largura da barra vertical */
+    height: 8px; /* Altura da barra horizontal */
+  }
+
+  ::-webkit-scrollbar-track {
+    background: transparent; /* Fundo invisível para ficar clean */
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background-color: #8b5cf6;
+    border-radius: 9999px; /* Borda totalmente redonda */
+    border: 2px solid transparent; /* Espaço para "descolar" a barra da borda */
+    background-clip: content-box; /* Garante que a borda transparente funcione */
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background-color: #7c3aed;
+  }
+
+  ::-webkit-scrollbar-corner {
+    background: transparent;
+  }
+}
