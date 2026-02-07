@@ -4,8 +4,7 @@ import { IsGoogleAuthAuthenticatedResponse } from "@shared/models/responses/goog
 import { SyncDatabaseResponse } from "@shared/models/responses/google/sync-database.response";
 import { useEffect, useState } from "react";
 import { toast } from 'react-hot-toast';
-import ConflictToast from "./components/ConflictToast";
-import ConflictToast2 from "./components/c2";
+import ConflictToast from "./components/conflict-toast/ConflictToast";
 
 interface props {
   onSyncDatabase?: () => void;
@@ -71,30 +70,20 @@ export default function GoogleAuthSection({ onSyncDatabase }: props) {
     });
   }
 
-  function subscribeToSyncConflict() {
-    function handleSyncConflict() {
-      toast.custom(
-        (t) => <ConflictToast t={t} />,
-        { duration: Infinity }
-      );
-    }
+  function handleSyncConflict() {
+    toast.custom(
+      (t) => <ConflictToast t={t} />,
+      { duration: Infinity }
+    );
+  }
 
+  function subscribeToSyncConflict() {
     window.api.google.onSyncConflict(handleSyncConflict);
   }
 
   useEffect(() => {
     subscribeToAuthSuccess();
     subscribeToSyncConflict();
-
-    toast.custom(
-      (t) => <ConflictToast t={t} />,
-      { duration: Infinity }
-    );
-
-    toast.custom(
-      (t) => <ConflictToast2 t={t} />,
-      { duration: Infinity }
-    );
   }, []);
 
   return (
@@ -119,7 +108,8 @@ export default function GoogleAuthSection({ onSyncDatabase }: props) {
             </button>
 
             <button
-              onClick={handleSyncDatabase}
+              // onClick={handleSyncDatabase}
+              onClick={handleSyncConflict}
               className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md"
             >
               Sincronizar com o Google
