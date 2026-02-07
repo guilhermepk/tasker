@@ -70,9 +70,14 @@ export default function GoogleAuthSection({ onSyncDatabase }: props) {
     });
   }
 
-  function handleSyncConflict() {
+  function handleSyncConflict({ cloudFileId }: { cloudFileId: string }) {
+    function onSyncEnd() {
+      window.alert('Sincronização concluída');
+      onSyncDatabase?.();
+    }
+
     toast.custom(
-      (t) => <ConflictToast t={t} />,
+      (t) => <ConflictToast t={t} cloudFileId={cloudFileId} onSyncEnd={onSyncEnd} />,
       { duration: Infinity }
     );
   }
@@ -108,8 +113,7 @@ export default function GoogleAuthSection({ onSyncDatabase }: props) {
             </button>
 
             <button
-              // onClick={handleSyncDatabase}
-              onClick={handleSyncConflict}
+              onClick={handleSyncDatabase}
               className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md"
             >
               Sincronizar com o Google

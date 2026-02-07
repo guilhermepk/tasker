@@ -49,7 +49,7 @@ export class SyncDatabaseUseCase {
 
     @Inject(DownloadCloudDatabaseFileUseCase)
     private readonly downloadCloudDatabaseFileUseCase: DownloadCloudDatabaseFileUseCase
-  ){}
+  ) { }
 
   async execute(): Promise<{ finished: boolean }> {
     return await tryCatch(async () => {
@@ -57,12 +57,16 @@ export class SyncDatabaseUseCase {
 
       const foundFolder: drive_v3.Schema$File | null = await this.getFolder();
 
+      console.log('Pasta encontrada:', foundFolder)
+
       if (!foundFolder) {
         await this.handleNewFolder();
         return { finished: true };
       }
       else {
         const foundFile: drive_v3.Schema$File | null = await this.getFile(foundFolder.id ?? '');
+
+        console.log('Arquivo encontrado:', foundFile)
 
         if (!foundFile) {
           await this.handleFileCreation(foundFolder.id ?? '');
@@ -87,6 +91,8 @@ export class SyncDatabaseUseCase {
       lastSyncHash
     );
 
+    console.log('syncSituation', syncSituation)
+
     switch (syncSituation) {
       case SyncSituationEnum.NOTHING_CHANGED: {
         console.log('Nenhuma alteração a ser salva')
@@ -104,7 +110,7 @@ export class SyncDatabaseUseCase {
       }
 
       case SyncSituationEnum.CONFLICT: {
-        await this.handleConflict();
+        await this.handleConflict(foundFile.id ?? '');
         return { finished: false };
       }
     }
@@ -113,39 +119,37 @@ export class SyncDatabaseUseCase {
   private async handleLocalWork(
     foundFileId: string,
     localFileHash: string
-  ){
+  ) {
     console.log('Trabalho local. Fazendo upload...')
-    await this.updateCloudDatabaseFileUseCase.execute(foundFileId);
-    await this.saveLastSyncHashUseCase.execute(localFileHash);
+    await this.updateCloudDatabaseFileUseCase.execute(foundFileId, localFileHash);
   }
 
   private async handleRemoteWork(
     foundFile: drive_v3.Schema$File
-  ){
+  ) {
     console.log('Trabalho remoto. Fazendo download...')
-    await this.downloadCloudDatabaseFileUseCase.execute(foundFile.id ?? '');
-    await this.saveLastSyncHashUseCase.execute(foundFile.md5Checksum ?? '');
+    await this.downloadCloudDatabaseFileUseCase.execute(foundFile.id ?? '', foundFile.md5Checksum ?? '');
   }
 
-  private async handleConflict(){
-    console.log('Conflito entre local e nuvem. Perguntando ao usuário...')        
-        
+  private async handleConflict(cloudFileId: string) {
+    console.log('Conflito entre local e nuvem. Perguntando ao usuário...');
+
     BrowserWindow.getAllWindows().forEach((win) => {
-      win.webContents.send('google-sync-conflict', );
+      win.webContents.send('google-sync-conflict', { cloudFileId });
     });
   }
 
   private async handleNewFolder(): Promise<void> {
     console.log('Criando nova pasta...')
     const createdFolder: drive_v3.Schema$File = await this.createFolder();
-    
+
     await this.handleFileCreation(createdFolder.id ?? '');
   }
 
   private async handleFileCreation(createdFolderId: string): Promise<void> {
     console.log('Criando arquivo...')
     await this.createFile(createdFolderId);
-    
+
     const localFileHash = await this.getFileHashUseCase.execute(DATABASE_FILE_NAME);
     await this.saveLastSyncHashUseCase.execute(localFileHash);
   }

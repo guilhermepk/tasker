@@ -3,10 +3,14 @@ import { Monitor, AlertCircle, X } from 'lucide-react';
 import Button from "./Button";
 import CancelButton from "./CancelButton";
 import GoogleDriveIcon from "@renderer/common/icons/GoogleDriveIcon";
+import { IpcResponse } from "@shared/models/interfaces/ipc-response.interface";
+import formatIpcError from "@renderer/utils/format-ipc-error";
 
 export default function ConflictToast({
-  t
-}: { t: Toast }) {
+  t,
+  cloudFileId,
+  onSyncEnd
+}: { t: Toast, cloudFileId: string, onSyncEnd?: () => void }) {
   return (
     <div
       className={`${t.visible ? 'animate-enter' : 'animate-leave'
@@ -14,7 +18,7 @@ export default function ConflictToast({
     >
       <ToastHeader />
 
-      <ToastContent t={t} />
+      <ToastContent t={t} cloudFileId={cloudFileId} onSyncEnd={onSyncEnd} />
     </div>
   );
 }
@@ -40,7 +44,11 @@ function ToastHeader() {
   );
 }
 
-function ToastContent({ t }: { t: Toast }) {
+function ToastContent({
+  t,
+  cloudFileId,
+  onSyncEnd
+}: { t: Toast, cloudFileId: string, onSyncEnd?: () => void }) {
   return (
     <div className="p-6">
       <div className="space-y-4">
@@ -48,7 +56,7 @@ function ToastContent({ t }: { t: Toast }) {
 
         <ActionMessage />
 
-        <ButtonsSection t={t} />
+        <ButtonsSection t={t} cloudFileId={cloudFileId} onSyncEnd={onSyncEnd} />
       </div>
     </div>
   );
@@ -68,12 +76,32 @@ const ActionMessage = () => (
   </div>
 );
 
-function ButtonsSection({ t }: { t: Toast }) {
-  function handleLocalChoice() {
+function ButtonsSection({
+  t,
+  cloudFileId,
+  onSyncEnd
+}: { t: Toast, cloudFileId: string, onSyncEnd?: () => void }) {
+  async function handleLocalChoice() {
+    const response: IpcResponse<void> = await window.api.google.updateCloudDatabaseFile({ cloudFileId });
 
+    if (response.success) {
+      onSyncEnd?.();
+      toast.dismiss(t.id);
+    } else {
+      window.alert(formatIpcError(response.error));
+    }
   }
 
-  function handleCloudChoice() { }
+  async function handleCloudChoice() {
+    const response: IpcResponse<void> = await window.api.google.downloadCloudDatabaseFile({ cloudFileId });
+
+    if (response.success) {
+      onSyncEnd?.();
+      toast.dismiss(t.id);
+    } else {
+      window.alert(formatIpcError(response.error));
+    }
+  }
 
   return (
     <>

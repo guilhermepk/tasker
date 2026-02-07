@@ -11,6 +11,8 @@ import { FindTaskByIdDto } from '@main/tasks/models/dtos/find-task-by-id.dto';
 import { FindTaskByIdResponse } from '@shared/models/responses/tasks/find-task-by-id.response';
 import { IsGoogleAuthAuthenticatedResponse } from '@shared/models/responses/google/is-google-auth-authenticated.response';
 import { SyncDatabaseResponse } from '@shared/models/responses/google/sync-database.response';
+import { UpdateCloudDatabaseFileDto } from '@main/apis/google/models/dto/update-cloud-database-file.dto';
+import { DownloadCloudDatabaseFileDto } from '@main/apis/google/models/dto/download-cloud-database-file.dto';
 
 const api: ContextBridgeApi = {
   tasks: {
@@ -23,23 +25,25 @@ const api: ContextBridgeApi = {
   google: {
     startAuth: (): Promise<IpcResponse<null>> => ipcRenderer.invoke('google/start-auth'),
     isAuthenticated: (): Promise<IpcResponse<IsGoogleAuthAuthenticatedResponse>> => ipcRenderer.invoke('google/is-authenticated'),
-    onAuthSuccess(callback: (payload: { email: string }) => void){
-      const subscription = (_event, payload) => callback(payload);
+    onAuthSuccess(callback: (payload: { email: string }) => void) {
+      const subscription = (_event: Electron.IpcRendererEvent, payload: { email: string }) => callback(payload);
       ipcRenderer.on('google-auth-success', subscription);
       return () => ipcRenderer.removeListener('google-auth-success', subscription);
     },
     onLogoutSuccess: (callback: () => void) => {
-      const subscription = (_event) => callback();
+      const subscription = (_event: Electron.IpcRendererEvent) => callback();
       ipcRenderer.on('google-logout-success', subscription);
       return () => ipcRenderer.removeListener('google-logout-success', subscription);
     },
     logout: () => ipcRenderer.invoke('google/logout'),
     syncDatabase: (): Promise<IpcResponse<SyncDatabaseResponse>> => ipcRenderer.invoke('google/sync-database'),
-    onSyncConflict: (callback: () => void) => {
-      const subscription = (_event) => callback();
+    onSyncConflict: (callback: (payload: { cloudFileId: string }) => void) => {
+      const subscription = (_event: Electron.IpcRendererEvent, payload: { cloudFileId: string }) => callback(payload);
       ipcRenderer.on('google-sync-conflict', subscription);
       return () => ipcRenderer.removeListener('google-sync-conflict', subscription);
     },
+    updateCloudDatabaseFile: (payload: UpdateCloudDatabaseFileDto): Promise<IpcResponse<void>> => ipcRenderer.invoke('google/update-cloud-database-file', payload),
+    downloadCloudDatabaseFile: (payload: DownloadCloudDatabaseFileDto): Promise<IpcResponse<void>> => ipcRenderer.invoke('google/download-cloud-database-file', payload)
   }
 }
 
