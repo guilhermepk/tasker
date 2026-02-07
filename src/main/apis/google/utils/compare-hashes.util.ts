@@ -5,9 +5,6 @@ export default function compareHashes(
   cloudFileHash: string,
   lastSynchronizedHash: string
 ): SyncSituationEnum {
-  console.log('localFileHash', localFileHash)
-  console.log('cloudFileHash', cloudFileHash)
-  console.log('lastSynchronizedHash', lastSynchronizedHash)
 
   // Cenário A: Nada mudou (Ocioso)
   if (

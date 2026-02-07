@@ -11,7 +11,7 @@ export class LogoutGoogleUseCase {
 
     @Inject(DeleteGoogleTokenUseCase)
     private readonly deleteGoogleTokenUseCase: DeleteGoogleTokenUseCase
-  ) {}
+  ) { }
 
   async execute(): Promise<void> {
     return await tryCatch(async () => {
@@ -19,7 +19,7 @@ export class LogoutGoogleUseCase {
       const currentToken = this.oAuth2Client.credentials.access_token;
       if (currentToken) {
         await this.oAuth2Client.revokeToken(currentToken).catch(() => {
-            console.warn('Não foi possível revogar o token remotamente, procedendo com logout local.');
+          console.warn('Não foi possível revogar o token remotamente, procedendo com logout local.');
         });
       }
 
@@ -28,8 +28,6 @@ export class LogoutGoogleUseCase {
 
       // 3. Remover os tokens do armazenamento seguro
       await this.deleteGoogleTokenUseCase.execute();
-
-      console.log('Logout do Google realizado com sucesso.');
     }, 'Erro ao realizar logout do Google');
   }
 }

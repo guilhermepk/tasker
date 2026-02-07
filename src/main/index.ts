@@ -43,8 +43,6 @@ app.whenReady().then(async () => {
     optimizer.watchWindowShortcuts(window)
   })
 
-  ipcMain.on('ping', () => console.log('pong'))
-
   await bootstrapNestJS();
   createWindow();
 

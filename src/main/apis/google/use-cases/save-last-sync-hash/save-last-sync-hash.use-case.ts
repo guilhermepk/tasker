@@ -8,10 +8,9 @@ export class SaveLastSyncHashUseCase {
   constructor(
     @Inject(SaveFileUseCase)
     private readonly saveFileUseCase: SaveFileUseCase
-  ){}
+  ) { }
 
   async execute(lastSyncHash: string): Promise<void> {
-    console.log('Salvando lastSyncHash...')
     const fileContent: LastSyncHashFileDto = {
       lastSyncHash: lastSyncHash
     }
